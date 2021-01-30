@@ -292,13 +292,11 @@ public class QuestionDAO implements Serializable {
             preStmQuestion.setString(3, question.getStatus());
             preStmQuestion.setString(4, question.getId());
             preStmQuestion.executeUpdate();
-            int count = 1;
             for (AnswerDTO answerDTO : listAnswer) {
-                preStmAnswer.setString(2, answerDTO.getAnswerContent());
-                preStmAnswer.setBoolean(3, answerDTO.isIsCorrectAnswer());
-                preStmAnswer.setString(4, answerDTO.getId());
+                preStmAnswer.setString(1, answerDTO.getAnswerContent());
+                preStmAnswer.setBoolean(2, answerDTO.isIsCorrectAnswer());
+                preStmAnswer.setString(3, answerDTO.getId());
                 preStmAnswer.executeUpdate();
-                count++;
             }
             conn.commit();
             conn.setAutoCommit(true);

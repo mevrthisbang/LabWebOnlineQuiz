@@ -94,7 +94,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputAnswer3">Answer 3</label>
-                                <textarea class="form-control" id="inputAnswer3" name="txtAnswer3"${param.txtAnswer3}</textarea>
+                                <textarea class="form-control" id="inputAnswer3" name="txtAnswer3">${param.txtAnswer3}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.answer3Error}
                                 </font>

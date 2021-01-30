@@ -48,14 +48,14 @@
             </div>
             <form action="updateQuestion" method="POST">
                 <div class="row">
-
+                    <input type="hidden" name="txtQuestionID" value="${requestScope.Question.id}"/>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                         </div>
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputContent">Question Content</label>
-                                <textarea class="form-control" id="inputContent" name="txtQuestionContent">${requestScope.Question.questionContent}</textarea>
+                                <textarea class="form-control" id="inputContent" name="txtQuestionContent" <c:if test="${requestScope.Question.status eq 'Deactive'}">readonly="true"</c:if>>${requestScope.Question.questionContent}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.nameError}
                                 </font>
@@ -70,7 +70,7 @@
                                 <div class="center">
                                     <div class="form-group col-md-4">
                                         <label for="inputCorrectAnswer">Correct Answer</label>
-                                        <textarea class="form-control" id="inputCorrectAnswer" name="txtCorrectAnswer">${answer.answerContent}</textarea>
+                                        <textarea class="form-control" id="inputCorrectAnswer" name="txtCorrectAnswer" <c:if test="${requestScope.Question.status eq 'Deactive'}">readonly="true"</c:if>>${answer.answerContent}</textarea>
                                         <font color="red">
                                         ${requestScope.INVALID.nameError}
                                         </font>
@@ -86,7 +86,7 @@
                             <div class="center">
                                 <div class="form-group col-md-4">
                                     <label for="inputAnswer${counter.count}">Answer ${counter.count}</label>
-                                    <textarea class="form-control" id="inputAnswer${counter.count}" name="txtAnswer${counter.count}">${answer.answerContent}</textarea>
+                                    <textarea class="form-control" id="inputAnswer${counter.count}" name="txtAnswer${counter.count}" <c:if test="${requestScope.Question.status eq 'Deactive'}">readonly="true"</c:if>>${answer.answerContent}</textarea>
                                     <font color="red">
                                     ${requestScope.INVALID.nameError}
                                     </font>
@@ -137,6 +137,11 @@
                         </div>
                     </div>
                 </div>
+                                <input type="hidden" name="page" value="${param.page}"/>
+                                    <input type="hidden" name="txtContent" value="${param.txtContent}"/>
+                                    <input type="hidden" name="cboStatus" value="${param.cboStatus}"/>
+                                    <input type="hidden" name="cboSubject" value="${param.cboSubject}"/>
+                                    
             </form>
         </div>
     </body>

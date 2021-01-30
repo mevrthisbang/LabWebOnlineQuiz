@@ -6,7 +6,6 @@
 package phuchgt.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -73,6 +72,7 @@ public class UpdateQuestionController extends HttpServlet {
             String answer3 = request.getParameter("txtAnswer3");
             String correctAnswer = request.getParameter("txtCorrectAnswer");
             String subject = request.getParameter("cboSubjects");
+            String status=request.getParameter("cboStatus");
             //valid
             boolean valid = true;
             QuestionErrorObj errorObj=new QuestionErrorObj();
@@ -98,22 +98,16 @@ public class UpdateQuestionController extends HttpServlet {
             }
             if (valid) {
                 QuestionDAO questionDAO = new QuestionDAO();
-                String lastQuestionID = questionDAO.getLastQuestionID();
-                String questionID;
-                if (lastQuestionID == null) {
-                    questionID = "QT_1";
-                } else {
-                    int count = Integer.parseInt(lastQuestionID.split("_")[1]);
-                    questionID = "QT_" + (count + 1);
-                }
+                String questionID=request.getParameter("txtQuestionID");
                 QuestionDTO question = new QuestionDTO(questionID, questionContent);
                 question.setSubject(subject);
+                question.setStatus(status);
                 List<AnswerDTO> listAnswer = new ArrayList<>();
                 listAnswer.add(setupAnswer(answer1, false, request.getParameter("txtAnswer1ID")));
                 listAnswer.add(setupAnswer(answer2, false, request.getParameter("txtAnswer2ID")));
                 listAnswer.add(setupAnswer(answer3, false, request.getParameter("txtAnswer3ID")));
                 listAnswer.add(setupAnswer(correctAnswer, true, request.getParameter("txtCorrectID")));
-                if(questionDAO.insert(question, listAnswer)){
+                if(questionDAO.update(question, listAnswer)){
                     url=SUCCESS;
                 }else{
                     request.setAttribute("ERROR", "Insert failed");
@@ -123,7 +117,7 @@ public class UpdateQuestionController extends HttpServlet {
                 request.setAttribute("INVALID", errorObj);
             }
         } catch (Exception e) {
-            log("ERROR at CreateQuestionController: " + e.getMessage());
+            log("ERROR at UpdateeQuestionController: " + e.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
