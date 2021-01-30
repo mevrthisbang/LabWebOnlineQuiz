@@ -15,7 +15,6 @@
         <h1>Your Quiz History</h1>
         <form action="getQuizHistory" method="POST">
             <input type="input" name="txtName" value="${param.txtName}"/>
-            <select></select>
         </form>
     </body>
 </html>

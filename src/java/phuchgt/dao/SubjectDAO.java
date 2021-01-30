@@ -57,36 +57,6 @@ public class SubjectDAO implements Serializable {
         return result;
     }
 
-    public SubjectDTO getSubjectQuizByID(String id, String loginUser) throws Exception {
-        SubjectDTO result = null;
-        String name, quizDescription;
-        int numberOfQuestion, quizTime;
-        try {
-            conn=MyConnection.getMyConnection();
-            String sql="Select name, quizDescription, numberOfQuestion, quizTime\n"
-                    + "From SUBJECT\n"
-                    + "Where id=? and id NOT IN(Select subject\n"
-                    + "From STUDENTQUIZDETAIL\n"
-                    + "Where student=? )";
-            preStm=conn.prepareStatement(sql);
-            preStm.setString(1, id);
-            preStm.setString(2, loginUser);
-            rs=preStm.executeQuery();
-            if(rs.next()){
-                name=rs.getString("name");
-                quizDescription=rs.getString("quizDescription");
-                numberOfQuestion=rs.getInt("numberOfQuestion");
-                quizTime=rs.getInt("quizTime");
-                result=new SubjectDTO(id, name);
-                result.setNumberOfQuestion(numberOfQuestion);
-                result.setQuizDescription(quizDescription);
-                result.setQuizTime(quizTime);
-            }
-        } finally {
-            closeConnection();
-        }
-        return result;
-    }
     public SubjectDTO getSubjectQuizByID(String id) throws Exception {
         SubjectDTO result = null;
         String name, quizDescription;

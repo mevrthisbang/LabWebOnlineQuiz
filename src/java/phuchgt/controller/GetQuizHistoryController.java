@@ -19,6 +19,17 @@ public class GetQuizHistoryController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        try {
+            String name=request.getParameter("txtName");
+            if(name==null){
+                name="";
+            }
+            
+        } catch (Exception e) {
+            log("ERROR at GetQuizHistoryController: "+e.getMessage());
+        }finally{
+            request.getRequestDispatcher("quizHistory").forward(request, response);
+        }
         
     }
 

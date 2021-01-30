@@ -26,6 +26,9 @@
                 <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.subjectID eq requestScope.quizSubject.id}">
                     <input type="submit" value="Continue Attempt"/>
                 </c:if>
+                    <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.status eq 'completed'}">
+                    <input type="submit" value="Continue Attempt"/>
+                </c:if>
                 <input type="hidden" value="${requestScope.quizSubject.id}" name="subjectID"/>
                 <input type="hidden" value="${requestScope.quizSubject.quizTime}" name="quizTime"/>
                 <input type="hidden" value="${requestScope.quizSubject.numberOfQuestion}" name="numberOfQuestion"/>

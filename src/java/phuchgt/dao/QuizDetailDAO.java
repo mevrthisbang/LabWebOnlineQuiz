@@ -49,8 +49,8 @@ public class QuizDetailDAO implements Serializable{
         boolean check=false;
         try {
            conn=MyConnection.getMyConnection();
-           String sqlInsertDetail="Insert Into STUDENTQUIZDETAIL(id, student, startedAt)\n"
-                   + "Values(?,?,?)";
+           String sqlInsertDetail="Insert Into STUDENTQUIZDETAIL(id, student, startedAt, estimateFinishTime, subject)\n"
+                   + "Values(?,?,?,?,?)";
            String sqlInsertStuQuestionQuiz="Insert Into STUDENTQUIZQUESTION(id, quizTake, question, questionContent)\n"
                    + "Values(?,?,?,?)";
            String sqlInsertStuQuestionAnswer="Insert Into STUDENTQUIZANSWER(id, question, answerContent, isCorrectAnswer)\n"
@@ -62,6 +62,8 @@ public class QuizDetailDAO implements Serializable{
            preStmDetail.setString(1, quizDetail.getId());
            preStmDetail.setString(2, quizDetail.getStudentID());
            preStmDetail.setTimestamp(3, new Timestamp(quizDetail.getStartedAt().getTime()));
+           preStmDetail.setTimestamp(4, new Timestamp(quizDetail.getEstimateFinishTime().getTime()));
+           preStmDetail.setString(5, quizDetail.getSubjectID());
            preStmDetail.executeUpdate();
            int count=1;
            for(QuestionDTO question: studentQuestionQuiz.keySet()){
@@ -94,7 +96,7 @@ public class QuizDetailDAO implements Serializable{
         try {
            conn=MyConnection.getMyConnection();
            String sqlUpdateDetail="Update STUDENTQUIZDETAIL\n"
-                   + "Set subject=?, score=?, numberOfCorrect=?, finishedAt=?\n"
+                   + "Set score=?, numberOfCorrect=?, finishedAt=?, status='Completed'\n"
                    + "Where id=?";
            String sqlInsertStuAnswer="Insert STUDENTANSWER(id, questionID, answerID, isCorrect)\n"
                    + "Values(?,?,?,?)";
@@ -123,5 +125,47 @@ public class QuizDetailDAO implements Serializable{
             closeConnection();
         }
         return check;
+    }
+    public List<QuizDetailDTO> getListQuizHistory(String name, String loginUser) throws Exception{
+        List<QuizDetailDTO> result=null;
+        try {
+            conn=MyConnection.getMyConnection();
+            String sql="Select subject, score, numberOfQuestion, status\n"
+                    + "From STUDENTQUIZDETAIL\n"
+                    + "Where student=? AND finishedAt<=GETDATE() AND subject IN(Select id\n"
+                    + "From SUBJECT\n"
+                    + "Where name LIKE ?)";
+            preStmDetail=conn.prepareStatement(sql);
+            preStmDetail.setString(1, loginUser);
+            preStmDetail.setString(2, "%"+name+"%");
+            rs=preStmDetail.executeQuery();
+            while(rs.next()){
+                
+            }
+        }finally{
+            closeConnection();
+        }
+        return result;
+    }
+    public QuizDetailDTO getQuizDetailById(String id) throws Exception{
+        QuizDetailDTO result=null;
+        try {
+            conn=MyConnection.getMyConnection();
+            String sql="Select estimateFinishTime, status, subject\n"
+                    + "From STUDENTQUIZDETAIL\n"
+                    + "Where id=?";
+            preStmDetail=conn.prepareStatement(sql);
+            preStmDetail.setString(1, id);
+            rs=preStmDetail.executeQuery();
+            if(rs.next()){
+                result=new QuizDetailDTO();
+                result.setEstimateFinishTime(rs.getDate("estimateFinishTime"));
+                result.setStatus(rs.getString("status"));
+                result.setSubjectID(rs.getString("subject"));
+            }
+        } finally{
+            closeConnection();
+        }
+        return result;
     }
 }

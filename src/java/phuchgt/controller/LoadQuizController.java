@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dao.SubjectDAO;
 import phuchgt.dto.AccountDTO;
+import phuchgt.dto.QuizDetailDTO;
 import phuchgt.dto.SubjectDTO;
 
 /**
@@ -21,20 +23,30 @@ import phuchgt.dto.SubjectDTO;
  * @author mevrthisbang
  */
 public class LoadQuizController extends HttpServlet {
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try {
             HttpSession session = request.getSession();
-            AccountDTO loginUser=(AccountDTO) session.getAttribute("USER");
-            String subjectID=request.getParameter("subjectID");
-            SubjectDAO dao=new SubjectDAO();
-            SubjectDTO quizSubject=dao.getSubjectQuizByID(subjectID, loginUser.getEmail());
+            AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
+            String subjectID = request.getParameter("subjectID");
+            SubjectDAO dao = new SubjectDAO();
+            SubjectDTO quizSubject = dao.getSubjectQuizByID(subjectID);
+            QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
+            QuizDetailDTO quizDetail = quizDetailDAO.getQuizDetailById(subjectID + "_" + loginUser.getEmail());
+            if (quizDetail != null) {
+                if (quizDetail.getStatus()!=null&&quizDetail.getStatus().equals("Completed")) {
+                    request.setAttribute("Status", quizDetail.getStatus());
+                } else {
+                    quizDetail.setId(subjectID + "_" + loginUser.getEmail());
+                    session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
+                }
+            }
             request.setAttribute("quizSubject", quizSubject);
         } catch (Exception e) {
-            log("ERROR at LoadQuizController: "+e.getMessage());
-        }finally{
+            log("ERROR at LoadQuizController: " + e.getMessage());
+        } finally {
             request.getRequestDispatcher("quizSubject.jsp").forward(request, response);
         }
     }

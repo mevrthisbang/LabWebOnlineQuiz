@@ -31,7 +31,7 @@ public class DispatchQuestionController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -68,7 +68,10 @@ public class DispatchQuestionController extends HttpServlet {
             HttpSession session = request.getSession();
             HashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (HashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
             if (listQuestionWithAnswers != null) {
-                int currentQuestion = Integer.parseInt(request.getParameter("currentQuestion"));
+                int currentQuestion=0;
+                if (!request.getParameter("currentQuestion").isEmpty()) {
+                    currentQuestion = Integer.parseInt(request.getParameter("currentQuestion"));
+                }
                 String action = request.getParameter("action");
                 if (action != null) {
                     if (action.equals("Next")) {
@@ -79,9 +82,9 @@ public class DispatchQuestionController extends HttpServlet {
                         url = DISPATCH;
                     } else if (action.equals("Finish Attempt")) {
                         url = CONFIRM;
-                    } else if (action.equals("submit")){
-                        url=SUBMIT;
-                    }else {
+                    } else if (action.equals("submit")) {
+                        url = SUBMIT;
+                    } else {
                         request.setAttribute("ERROR", "Your action is invalid");
                     }
                 }

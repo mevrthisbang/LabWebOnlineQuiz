@@ -13,8 +13,8 @@ import java.util.Date;
  * @author mevrthisbang
  */
 public class QuizDetailDTO implements Serializable{
-    private String id, subjectID, studentID;
-    private Date startedAt, finishedAt;
+    private String id, subjectID, studentID, status;
+    private Date startedAt, finishedAt, estimateFinishTime;
     private float score;
     private int numberOfCorrect;
 
@@ -85,6 +85,22 @@ public class QuizDetailDTO implements Serializable{
 
     public void setNumberOfCorrect(int numberOfCorrect) {
         this.numberOfCorrect = numberOfCorrect;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getEstimateFinishTime() {
+        return estimateFinishTime;
+    }
+
+    public void setEstimateFinishTime(Date estimateFinishTime) {
+        this.estimateFinishTime = estimateFinishTime;
     }
     
 }

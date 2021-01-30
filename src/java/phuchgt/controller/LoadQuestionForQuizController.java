@@ -37,15 +37,18 @@ public class LoadQuestionForQuizController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
             HttpSession session = request.getSession();
+            QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
+            QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
+            Date timeEndQuiz = null;
+            List<QuestionDTO> listQuestion=null;
+            QuestionDAO questionDAO = new QuestionDAO();
+            AnswerDAO answerDAO = new AnswerDAO();
             LinkedHashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (LinkedHashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
-            if (listQuestionWithAnswers == null) {
-                
+            if (quizDetail == null) {
                 String subjectID = request.getParameter("subjectID");
                 int quizTime = Integer.parseInt(request.getParameter("quizTime"));
                 int numberOfQuestion = Integer.parseInt(request.getParameter("numberOfQuestion"));
-                QuestionDAO questionDAO = new QuestionDAO();
-                List<QuestionDTO> listQuestion = questionDAO.generateListQuestion(subjectID, numberOfQuestion);
-                AnswerDAO answerDAO = new AnswerDAO();
+                listQuestion = questionDAO.generateListQuestion(subjectID, numberOfQuestion);
                 listQuestionWithAnswers = new LinkedHashMap<>();
                 for (QuestionDTO questionDTO : listQuestion) {
                     listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfQuestion(questionDTO.getId()));
@@ -55,25 +58,36 @@ public class LoadQuestionForQuizController extends HttpServlet {
                 calendar.setTime(date);
                 calendar.add(Calendar.MINUTE, quizTime);
                 calendar.add(Calendar.SECOND, 2);
-                Date timeEndQuiz = calendar.getTime();
+                timeEndQuiz = calendar.getTime();
                 AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
-                QuizDetailDTO quizDetail = new QuizDetailDTO();
+                quizDetail = new QuizDetailDTO();
                 quizDetail.setId(subjectID + "_" + loginUser.getEmail());
                 quizDetail.setSubjectID(subjectID);
                 quizDetail.setStudentID(loginUser.getEmail());
                 quizDetail.setStartedAt(date);
-                QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
+                quizDetail.setStatus("In Progress");
+                quizDetail.setEstimateFinishTime(timeEndQuiz);
                 if (quizDetailDAO.insertStudentQuiz(quizDetail, listQuestionWithAnswers)) {
                     listQuestionWithAnswers.clear();
                     listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
                     for (QuestionDTO questionDTO : listQuestion) {
                         listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfStuQuestion(questionDTO.getId()));
                     }
-                    session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
-                    session.setAttribute("listQuestionQuiz", listQuestionWithAnswers);
-                    session.setAttribute("timeEndQuiz", timeEndQuiz);
+                }
+            } else {
+                if(listQuestionWithAnswers==null){
+                    listQuestionWithAnswers = new LinkedHashMap<>();
+                    listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
+                    for (QuestionDTO questionDTO : listQuestion) {
+                        listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfStuQuestion(questionDTO.getId()));
+                    }
+                }else{
+                    timeEndQuiz=quizDetail.getEstimateFinishTime();
                 }
             }
+            session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
+            session.setAttribute("listQuestionQuiz", listQuestionWithAnswers);
+            session.setAttribute("timeEndQuiz", timeEndQuiz);
             request.setAttribute("Question", (QuestionDTO) listQuestionWithAnswers.keySet().toArray()[0]);
             request.setAttribute("listAnswer", listQuestionWithAnswers.values().toArray()[0]);
             request.setAttribute("currentQuestion", 1);
