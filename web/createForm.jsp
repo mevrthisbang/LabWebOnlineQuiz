@@ -55,9 +55,9 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputContent">Question Content</label>
-                                <textarea class="form-control" id="inputContent" name="txtContent">${requestScope.FOOD.name}</textarea>
+                                <textarea class="form-control" id="inputContent" name="txtQuestionContent">${param.txtContent}</textarea>
                                 <font color="red">
-                                ${requestScope.INVALID.contentError}
+                                ${requestScope.INVALID.questionContentError}
                                 </font>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputAnswer1">Answer 1</label>
-                                <textarea class="form-control" id="inputAnswer1" name="txtAnswer1">${requestScope.FOOD.name}</textarea>
+                                <textarea class="form-control" id="inputAnswer1" name="txtAnswer1">${param.txtAnswer1}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.answer1Error}
                                 </font>
@@ -81,7 +81,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputAnswer2">Answer 2</label>
-                                <textarea class="form-control" id="inputAnswer2" name="txtAnswer2">${requestScope.FOOD.name}</textarea>
+                                <textarea class="form-control" id="inputAnswer2" name="txtAnswer2">${param.txtAnswer2}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.answer2Error}
                                 </font>
@@ -94,7 +94,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputAnswer3">Answer 3</label>
-                                <textarea class="form-control" id="inputAnswer3" name="txtAnswer3">${requestScope.FOOD.name}</textarea>
+                                <textarea class="form-control" id="inputAnswer3" name="txtAnswer3"${param.txtAnswer3}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.answer3Error}
                                 </font>
@@ -107,7 +107,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputCorrectAnswer">Correct Answer</label>
-                                <textarea class="form-control" id="inputCorrectAnswer" name="txtCorrectAnswer">${requestScope.FOOD.name}</textarea>
+                                <textarea class="form-control" id="inputCorrectAnswer" name="txtCorrectAnswer">${param.txtCorrectAnswer}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.correctAnswerError}
                                 </font>
@@ -120,7 +120,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputSubject">Subject</label><br>
-                                <select name="cboSubject" id="inputSubject" class="custom-select">
+                                <select name="cboSubjects" id="inputSubject" class="custom-select">
                                     <c:if test="${applicationScope.listSubjects!=null}">
                                         <c:forEach items="${applicationScope.listSubjects}" var="subject">
                                             <option value="${subject.id}" <c:if test="${param.cboSubject eq subject.id}">selected="true"</c:if>>${subject.id} - ${subject.name}</option>

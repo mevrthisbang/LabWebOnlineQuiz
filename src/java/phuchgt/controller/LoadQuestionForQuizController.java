@@ -8,7 +8,7 @@ package phuchgt.controller;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,15 +37,16 @@ public class LoadQuestionForQuizController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
             HttpSession session = request.getSession();
-            HashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (HashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
+            LinkedHashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (LinkedHashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
             if (listQuestionWithAnswers == null) {
+                
                 String subjectID = request.getParameter("subjectID");
                 int quizTime = Integer.parseInt(request.getParameter("quizTime"));
                 int numberOfQuestion = Integer.parseInt(request.getParameter("numberOfQuestion"));
                 QuestionDAO questionDAO = new QuestionDAO();
                 List<QuestionDTO> listQuestion = questionDAO.generateListQuestion(subjectID, numberOfQuestion);
                 AnswerDAO answerDAO = new AnswerDAO();
-                listQuestionWithAnswers = new HashMap<>();
+                listQuestionWithAnswers = new LinkedHashMap<>();
                 for (QuestionDTO questionDTO : listQuestion) {
                     listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfQuestion(questionDTO.getId()));
                 }

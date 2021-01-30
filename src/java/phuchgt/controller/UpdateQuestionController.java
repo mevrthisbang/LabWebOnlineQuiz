@@ -7,41 +7,27 @@ package phuchgt.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import phuchgt.dao.QuestionDAO;
+import phuchgt.dto.AnswerDTO;
+import phuchgt.dto.QuestionDTO;
+import phuchgt.dto.QuestionErrorObj;
 
 /**
  *
  * @author mevrthisbang
  */
 public class UpdateQuestionController extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private static final String ERROR = "error.jsp";
+    private static final String SUCCESS = "LoadQuestionController";
+    private static final String INVALID="updateForm.jsp";
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UpdateQuestionController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UpdateQuestionController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -56,7 +42,9 @@ public class UpdateQuestionController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        request.setAttribute("ERROR", "You do not have permission to do this");
+        request.getRequestDispatcher(ERROR).forward(request, response);
     }
 
     /**
@@ -67,10 +55,79 @@ public class UpdateQuestionController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private AnswerDTO setupAnswer(String answerContent, boolean isCorrectAnswer, String answerID){
+        AnswerDTO answer=new AnswerDTO();
+        answer.setId(answerID);
+        answer.setAnswerContent(answerContent);
+        answer.setIsCorrectAnswer(isCorrectAnswer);
+        return answer;
+    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String url = ERROR;
+        try {
+            String questionContent = request.getParameter("txtQuestionContent");
+            String answer1 = request.getParameter("txtAnswer1");
+            String answer2 = request.getParameter("txtAnswer2");
+            String answer3 = request.getParameter("txtAnswer3");
+            String correctAnswer = request.getParameter("txtCorrectAnswer");
+            String subject = request.getParameter("cboSubjects");
+            //valid
+            boolean valid = true;
+            QuestionErrorObj errorObj=new QuestionErrorObj();
+            if(questionContent.isEmpty()){
+                valid=false;
+                errorObj.setQuestionContentError("Question Content is not supposed to be empty");
+            }
+            if(answer1.isEmpty()){
+                valid=false;
+                errorObj.setAnswer1Error("Not supposed to be empty");
+            }
+            if(answer2.isEmpty()){
+                valid=false;
+                errorObj.setAnswer2Error("Not supposed to be empty");
+            }
+            if(answer3.isEmpty()){
+                valid=false;
+                errorObj.setAnswer3Error("Not supposed to be empty");
+            }
+            if(correctAnswer.isEmpty()){
+                valid=false;
+                errorObj.setCorrectAnswerError("Not supposed to be empty");
+            }
+            if (valid) {
+                QuestionDAO questionDAO = new QuestionDAO();
+                String lastQuestionID = questionDAO.getLastQuestionID();
+                String questionID;
+                if (lastQuestionID == null) {
+                    questionID = "QT_1";
+                } else {
+                    int count = Integer.parseInt(lastQuestionID.split("_")[1]);
+                    questionID = "QT_" + (count + 1);
+                }
+                QuestionDTO question = new QuestionDTO(questionID, questionContent);
+                question.setSubject(subject);
+                List<AnswerDTO> listAnswer = new ArrayList<>();
+                listAnswer.add(setupAnswer(answer1, false, request.getParameter("txtAnswer1ID")));
+                listAnswer.add(setupAnswer(answer2, false, request.getParameter("txtAnswer2ID")));
+                listAnswer.add(setupAnswer(answer3, false, request.getParameter("txtAnswer3ID")));
+                listAnswer.add(setupAnswer(correctAnswer, true, request.getParameter("txtCorrectID")));
+                if(questionDAO.insert(question, listAnswer)){
+                    url=SUCCESS;
+                }else{
+                    request.setAttribute("ERROR", "Insert failed");
+                }
+            }else{
+                url=INVALID;
+                request.setAttribute("INVALID", errorObj);
+            }
+        } catch (Exception e) {
+            log("ERROR at CreateQuestionController: " + e.getMessage());
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
+        }
+
     }
 
     /**

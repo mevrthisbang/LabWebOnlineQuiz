@@ -69,12 +69,12 @@ public class CreateQuestionController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String url = ERROR;
         try {
-            String questionContent = request.getParameter("txtContent");
+            String questionContent = request.getParameter("txtQuestionContent");
             String answer1 = request.getParameter("txtAnswer1");
             String answer2 = request.getParameter("txtAnswer2");
             String answer3 = request.getParameter("txtAnswer3");
             String correctAnswer = request.getParameter("txtCorrectAnswer");
-            String subject = request.getParameter("cboSubject");
+            String subject = request.getParameter("cboSubjects");
             //valid
             boolean valid = true;
             QuestionErrorObj errorObj=new QuestionErrorObj();

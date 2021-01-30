@@ -55,7 +55,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputContent">Question Content</label>
-                                <textarea class="form-control" id="inputContent" name="txtContent">${requestScope.Question.questionContent}</textarea>
+                                <textarea class="form-control" id="inputContent" name="txtQuestionContent">${requestScope.Question.questionContent}</textarea>
                                 <font color="red">
                                 ${requestScope.INVALID.nameError}
                                 </font>
@@ -74,6 +74,7 @@
                                         <font color="red">
                                         ${requestScope.INVALID.nameError}
                                         </font>
+                                        <input type="hidden" name="txtCorrectID" value="${answer.id}"/>
                                     </div>
                                 </div>
                             </div>
@@ -89,6 +90,7 @@
                                     <font color="red">
                                     ${requestScope.INVALID.nameError}
                                     </font>
+                                    <input type="hidden" name="txtAnswer${counter.count}ID" value="${answer.id}"/>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +117,7 @@
                         <div class="center">
                             <div class="form-group col-md-4">
                                 <label for="inputSubject">Subject</label><br>
-                                <select name="cboSubject" id="inputSubject" class="custom-select">
+                                <select name="cboSubjects" id="inputSubject" class="custom-select">
                                     <c:if test="${applicationScope.listSubjects!=null}">
                                         <c:forEach items="${applicationScope.listSubjects}" var="subject">
                                             <option value="${subject.id}" <c:if test="${requestScope.Question.id eq subject.id}">selected="true"</c:if>>${subject.id} - ${subject.name}</option>

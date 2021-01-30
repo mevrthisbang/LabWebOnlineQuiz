@@ -274,4 +274,38 @@ public class QuestionDAO implements Serializable {
         }
         return result;
     }
+    public boolean update(QuestionDTO question, List<AnswerDTO> listAnswer) throws Exception {
+        boolean check = false;
+        try {
+            conn = MyConnection.getMyConnection();
+            String sqlUpdateQuestion = "Update QUESTION\n"
+                    + "Set questionContent=?, subject=?, status=?\n"
+                    + "Where id=?";
+            String sqlUpdateAnswer = "Update ANSWER\n"
+                    + "Set answerContent=?, isCorrectAnswer=?\n"
+                    + "Where id=?";
+            preStmQuestion = conn.prepareStatement(sqlUpdateQuestion);
+            preStmAnswer = conn.prepareStatement(sqlUpdateAnswer);
+            conn.setAutoCommit(false);
+            preStmQuestion.setString(1, question.getQuestionContent());
+            preStmQuestion.setString(2, question.getSubject());
+            preStmQuestion.setString(3, question.getStatus());
+            preStmQuestion.setString(4, question.getId());
+            preStmQuestion.executeUpdate();
+            int count = 1;
+            for (AnswerDTO answerDTO : listAnswer) {
+                preStmAnswer.setString(2, answerDTO.getAnswerContent());
+                preStmAnswer.setBoolean(3, answerDTO.isIsCorrectAnswer());
+                preStmAnswer.setString(4, answerDTO.getId());
+                preStmAnswer.executeUpdate();
+                count++;
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+            check = true;
+        } finally {
+            closeConnection();
+        }
+        return check;
+    }
 }
