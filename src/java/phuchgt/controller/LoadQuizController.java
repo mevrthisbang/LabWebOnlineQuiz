@@ -24,12 +24,14 @@ import phuchgt.dto.SubjectDTO;
  * @author mevrthisbang
  */
 public class LoadQuizController extends HttpServlet {
-    private static final String NORMAL="quizSubject";
-    private static final String AUTOSUBMIT="SubmitQuizController";
+
+    private static final String NORMAL = "quizSubject";
+    private static final String AUTOSUBMIT = "SubmitQuizController";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url=NORMAL;
+        String url = NORMAL;
         try {
             HttpSession session = request.getSession();
             AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
@@ -39,19 +41,17 @@ public class LoadQuizController extends HttpServlet {
             QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
             QuizDetailDTO quizDetail = quizDetailDAO.getQuizDetailById(subjectID + "_" + loginUser.getEmail());
             if (quizDetail != null) {
-                if (quizDetail.getEstimateFinishTime().after(new Date())) {
-                    if (quizDetail.getStatus() != null && quizDetail.getStatus().equals("Completed")) {
-                        request.setAttribute("Status", quizDetail.getStatus());
-                    } else {
-                        quizDetail.setId(subjectID + "_" + loginUser.getEmail());
-                        session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
-                    }
-                }else{
-                    url=AUTOSUBMIT;
+                if (quizDetail.getStatus() != null && quizDetail.getStatus().equals("Completed")) {
+                    request.setAttribute("Status", quizDetail.getStatus());
+                } else if (quizDetail.getEstimateFinishTime().after(new Date())) {
+                    url = AUTOSUBMIT;
+                } else {
+                    quizDetail.setId(subjectID + "_" + loginUser.getEmail());
+                    session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
                 }
             }
             request.setAttribute("quizSubject", quizSubject);
-            
+
         } catch (Exception e) {
             log("ERROR at LoadQuizController: " + e.getMessage());
         } finally {

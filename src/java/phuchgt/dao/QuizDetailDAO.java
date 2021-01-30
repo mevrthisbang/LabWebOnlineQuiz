@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import phuchgt.db.MyConnection;
@@ -147,6 +148,7 @@ public class QuizDetailDAO implements Serializable {
             preStmDetail.setString(1, loginUser);
             preStmDetail.setString(2, "%" + name + "%");
             rs = preStmDetail.executeQuery();
+            result=new ArrayList<>();
             while (rs.next()) {
                 subjectID=rs.getString("subject");
                 score=rs.getFloat("score");
@@ -155,6 +157,7 @@ public class QuizDetailDAO implements Serializable {
                 dto.setSubjectID(subjectID);
                 dto.setScore(score);
                 dto.setNumberOfCorrect(numberOfCorrect);
+                result.add(dto);
             }
         } finally {
             closeConnection();

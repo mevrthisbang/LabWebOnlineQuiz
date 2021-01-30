@@ -24,7 +24,7 @@
                     <div class="row" >
                         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
                             <!-- logo start -->
-                            <div class="logo"> <a href=""><img src="img/logo.png" alt="logo" /></a> </div>
+                            <div class="logo"> <a href="loadSubject"><img src="img/logo.png" alt="logo" /></a> </div>
                             <!-- logo end -->
                         </div>
                         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
@@ -32,7 +32,7 @@
                             <div class="menu_side">
                                 <div id="navbar_menu">
                                     <ul class="first-ul">
-                                        <li> <a class="active" href="MainController">Home</a>
+                                        <li> <a class="active" href="loadSubject">Home</a>
                                         </li>
                                         <li><a href="getQuizHistory">Quiz History</a></li>
                                         <li><a href="logout">Logout</a></li>

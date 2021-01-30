@@ -6,10 +6,15 @@
 package phuchgt.controller;
 
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import phuchgt.dao.QuizDetailDAO;
+import phuchgt.dto.AccountDTO;
+import phuchgt.dto.QuizDetailDTO;
 
 /**
  *
@@ -20,15 +25,19 @@ public class GetQuizHistoryController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try {
+            HttpSession session=request.getSession();
+            AccountDTO loginUser=(AccountDTO) session.getAttribute("USER");
             String name=request.getParameter("txtName");
             if(name==null){
                 name="";
             }
-            
+            QuizDetailDAO dao=new QuizDetailDAO();
+            List<QuizDetailDTO> listQuizHistory=dao.getListQuizHistory(name, loginUser.getEmail());
+            request.setAttribute("listQuizHistory", listQuizHistory);
         } catch (Exception e) {
             log("ERROR at GetQuizHistoryController: "+e.getMessage());
         }finally{
-            request.getRequestDispatcher("quizHistory").forward(request, response);
+            request.getRequestDispatcher("quizHistory.jsp").forward(request, response);
         }
         
     }
