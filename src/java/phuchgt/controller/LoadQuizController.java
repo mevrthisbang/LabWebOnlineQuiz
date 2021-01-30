@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import phuchgt.dao.QuizDAO;
+import phuchgt.dao.SubjectDAO;
 import phuchgt.dto.AccountDTO;
-import phuchgt.dto.QuizDTO;
+import phuchgt.dto.SubjectDTO;
 
 /**
  *
@@ -29,9 +29,9 @@ public class LoadQuizController extends HttpServlet {
             HttpSession session = request.getSession();
             AccountDTO loginUser=(AccountDTO) session.getAttribute("USER");
             String subjectID=request.getParameter("subjectID");
-            QuizDAO dao=new QuizDAO();
-            List<QuizDTO> listQuiz=dao.getQuizBySubject(subjectID, loginUser.getEmail());
-            request.setAttribute("listQuiz", listQuiz);
+            SubjectDAO dao=new SubjectDAO();
+            SubjectDTO quizSubject=dao.getSubjectQuizByID(subjectID, loginUser.getEmail());
+            request.setAttribute("quizSubject", quizSubject);
         } catch (Exception e) {
             log("ERROR at LoadQuizController: "+e.getMessage());
         }finally{

@@ -101,7 +101,7 @@ public class QuizDetailDAO implements Serializable{
            preStmDetail=conn.prepareStatement(sqlUpdateDetail);
            preStmStuAnswer=conn.prepareStatement(sqlInsertStuAnswer);
            conn.setAutoCommit(false);
-           preStmDetail.setString(1, quizDetail.getQuizID());
+           preStmDetail.setString(1, quizDetail.getSubjectID());
            preStmDetail.setFloat(2, quizDetail.getScore());
            preStmDetail.setInt(3, quizDetail.getNumberOfCorrect());
            preStmDetail.setTimestamp(4, new Timestamp(quizDetail.getFinishedAt().getTime()));

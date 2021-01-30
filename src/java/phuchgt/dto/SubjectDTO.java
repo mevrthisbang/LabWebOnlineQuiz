@@ -12,8 +12,8 @@ import java.io.Serializable;
  * @author mevrthisbang
  */
 public class SubjectDTO implements Serializable{
-    private String id,name, description;
-
+    private String id,name, description, quizDescription;
+    private int numberOfQuestion, quizTime;
     public SubjectDTO() {
     }
 
@@ -44,6 +44,30 @@ public class SubjectDTO implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getQuizDescription() {
+        return quizDescription;
+    }
+
+    public void setQuizDescription(String quizDescription) {
+        this.quizDescription = quizDescription;
+    }
+
+    public int getNumberOfQuestion() {
+        return numberOfQuestion;
+    }
+
+    public void setNumberOfQuestion(int numberOfQuestion) {
+        this.numberOfQuestion = numberOfQuestion;
+    }
+
+    public int getQuizTime() {
+        return quizTime;
+    }
+
+    public void setQuizTime(int quizTime) {
+        this.quizTime = quizTime;
     }
     
     

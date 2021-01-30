@@ -13,7 +13,7 @@ import java.util.Date;
  * @author mevrthisbang
  */
 public class QuizDetailDTO implements Serializable{
-    private String id, quizID, studentID;
+    private String id, subjectID, studentID;
     private Date startedAt, finishedAt;
     private float score;
     private int numberOfCorrect;
@@ -21,9 +21,9 @@ public class QuizDetailDTO implements Serializable{
     public QuizDetailDTO() {
     }
 
-    public QuizDetailDTO(String id, String quizID, String studentID, Date startedAt, Date finishedAt, float score, int numberOfCorrect) {
+    public QuizDetailDTO(String id, String subjectID, String studentID, Date startedAt, Date finishedAt, float score, int numberOfCorrect) {
         this.id = id;
-        this.quizID = quizID;
+        this.subjectID = subjectID;
         this.studentID = studentID;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
@@ -39,12 +39,12 @@ public class QuizDetailDTO implements Serializable{
         this.id = id;
     }
 
-    public String getQuizID() {
-        return quizID;
+    public String getSubjectID() {
+        return subjectID;
     }
 
-    public void setQuizID(String quizID) {
-        this.quizID = quizID;
+    public void setSubjectID(String subjectID) {
+        this.subjectID = subjectID;
     }
 
     public String getStudentID() {

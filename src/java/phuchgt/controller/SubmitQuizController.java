@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import phuchgt.dao.AnswerDAO;
-import phuchgt.dao.QuizDAO;
 import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dto.QuizAnswerObj;
 import phuchgt.dto.QuizDetailDTO;
@@ -86,8 +85,8 @@ public class SubmitQuizController extends HttpServlet {
             if (dao.updateQuizDetailAndInsertStuAnswer(quizDetail, studentAnswer.getStudentAnswer())) {
                 request.setAttribute("score", score);
                 request.setAttribute("numberOfCorrect", numberOfCorrect);
-                QuizDAO quizDAO=new QuizDAO();
-                request.setAttribute("QUIZ", quizDAO.getQuizByID(quizDetail.getQuizID()));
+//                QuizDAO quizDAO=new QuizDAO();
+//                request.setAttribute("QUIZ", quizDAO.getQuizByID(quizDetail.getQuizID()));
                 session.removeAttribute("STUDENTANSWER");
                 session.removeAttribute("STUDENTQUIZDETAIL");
                 session.removeAttribute("listQuestionQuiz");
