@@ -82,7 +82,22 @@ public class CreateQuestionController extends HttpServlet {
                 valid=false;
                 errorObj.setQuestionContentError("Question Content is not supposed to be empty");
             }
-            
+            if(answer1.isEmpty()){
+                valid=false;
+                errorObj.setAnswer1Error("Not supposed to be empty");
+            }
+            if(answer2.isEmpty()){
+                valid=false;
+                errorObj.setAnswer2Error("Not supposed to be empty");
+            }
+            if(answer3.isEmpty()){
+                valid=false;
+                errorObj.setAnswer3Error("Not supposed to be empty");
+            }
+            if(correctAnswer.isEmpty()){
+                valid=false;
+                errorObj.setCorrectAnswerError("Not supposed to be empty");
+            }
             if (valid) {
                 QuestionDAO questionDAO = new QuestionDAO();
                 String lastQuestionID = questionDAO.getLastQuestionID();

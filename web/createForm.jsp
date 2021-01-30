@@ -57,7 +57,7 @@
                                 <label for="inputContent">Question Content</label>
                                 <textarea class="form-control" id="inputContent" name="txtContent">${requestScope.FOOD.name}</textarea>
                                 <font color="red">
-                                ${requestScope.INVALID.nameError}
+                                ${requestScope.INVALID.contentError}
                                 </font>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                                 <label for="inputAnswer1">Answer 1</label>
                                 <textarea class="form-control" id="inputAnswer1" name="txtAnswer1">${requestScope.FOOD.name}</textarea>
                                 <font color="red">
-                                ${requestScope.INVALID.nameError}
+                                ${requestScope.INVALID.answer1Error}
                                 </font>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                                 <label for="inputAnswer2">Answer 2</label>
                                 <textarea class="form-control" id="inputAnswer2" name="txtAnswer2">${requestScope.FOOD.name}</textarea>
                                 <font color="red">
-                                ${requestScope.INVALID.nameError}
+                                ${requestScope.INVALID.answer2Error}
                                 </font>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                                 <label for="inputAnswer3">Answer 3</label>
                                 <textarea class="form-control" id="inputAnswer3" name="txtAnswer3">${requestScope.FOOD.name}</textarea>
                                 <font color="red">
-                                ${requestScope.INVALID.nameError}
+                                ${requestScope.INVALID.answer3Error}
                                 </font>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                                 <label for="inputCorrectAnswer">Correct Answer</label>
                                 <textarea class="form-control" id="inputCorrectAnswer" name="txtCorrectAnswer">${requestScope.FOOD.name}</textarea>
                                 <font color="red">
-                                ${requestScope.INVALID.nameError}
+                                ${requestScope.INVALID.correctAnswerError}
                                 </font>
                             </div>
                         </div>
