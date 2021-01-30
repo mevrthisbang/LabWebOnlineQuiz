@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import phuchgt.dao.AnswerDAO;
 import phuchgt.dao.QuizDetailDAO;
+import phuchgt.dao.SubjectDAO;
 import phuchgt.dto.QuizAnswerObj;
 import phuchgt.dto.QuizDetailDTO;
 
@@ -85,11 +86,12 @@ public class SubmitQuizController extends HttpServlet {
             if (dao.updateQuizDetailAndInsertStuAnswer(quizDetail, studentAnswer.getStudentAnswer())) {
                 request.setAttribute("score", score);
                 request.setAttribute("numberOfCorrect", numberOfCorrect);
-//                QuizDAO quizDAO=new QuizDAO();
-//                request.setAttribute("QUIZ", quizDAO.getQuizByID(quizDetail.getQuizID()));
+                SubjectDAO subjectDAO=new SubjectDAO();
+                request.setAttribute("quizSubject", subjectDAO.getSubjectQuizByID(quizDetail.getSubjectID()));
                 session.removeAttribute("STUDENTANSWER");
                 session.removeAttribute("STUDENTQUIZDETAIL");
                 session.removeAttribute("listQuestionQuiz");
+                session.removeAttribute("timeEndQuiz");
                 url=SUCCESS;
             } else {
                 request.setAttribute("ERROR", "There's some errors during submit quiz");

@@ -94,7 +94,7 @@ public class QuizDetailDAO implements Serializable{
         try {
            conn=MyConnection.getMyConnection();
            String sqlUpdateDetail="Update STUDENTQUIZDETAIL\n"
-                   + "Set quiz=?, score=?, numberOfCorrect=?, finishedAt=?\n"
+                   + "Set subject=?, score=?, numberOfCorrect=?, finishedAt=?\n"
                    + "Where id=?";
            String sqlInsertStuAnswer="Insert STUDENTANSWER(id, questionID, answerID, isCorrect)\n"
                    + "Values(?,?,?,?)";

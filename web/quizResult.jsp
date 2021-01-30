@@ -43,19 +43,19 @@
         </div>
         <div class="container" style="margin-top: 50px;">
             <div class="center">
-                <h1>${requestScope.QUIZ.name} - ${requestScope.QUIZ.subjectID}</h1>
+                <h1>${requestScope.quizSubject.name} - ${requestScope.quizSubject.id}</h1>
             </div>
             <div class="center">
-                <p>${requestScope.QUIZ.description}</p>
+                <p>${requestScope.quizSubject.quizDescription}</p>
             </div>
             <div class="center">
-                <p>Number of Question: ${requestScope.QUIZ.numberOfQuestion}</p>
+                <p>Number of Question: ${requestScope.quizSubject.numberOfQuestion}</p>
             </div>
             <div class="center">
-                <p>Time limit: ${requestScope.QUIZ.quizTime} minutes</p>
+                <p>Time limit: ${requestScope.quizSubject.quizTime} minutes</p>
             </div>
             <div class="center">
-                <table border="1">
+                <table border="1" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Number of Correct Question</th>
@@ -64,8 +64,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>${requestScope.score}</td>
                             <td>${requestScope.numberOfCorrect}</td>
+                            <td>${requestScope.score}</td>
                         </tr>
                     </tbody>
                 </table>

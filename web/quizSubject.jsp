@@ -20,15 +20,15 @@
                 <c:if test="${sessionScope.STUDENTQUIZDETAIL==null}" var="testNull">
                     <input type="submit" value="Start Quiz"/>
                 </c:if>
-                <c:if test="${!testNull&&sessionScope.STUDENTQUIZDETAIL.subjectID ne subject.id}">
+                <c:if test="${!testNull&&sessionScope.STUDENTQUIZDETAIL.subjectID ne requestScope.quizSubject.id}">
                     <p>Done the quiz you selected first</p>
                 </c:if>
-                <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.quizID eq quiz.id}">
+                <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.subjectID eq requestScope.quizSubject.id}">
                     <input type="submit" value="Continue Attempt"/>
                 </c:if>
-                <input type="hidden" value="${quiz.id}" name="subjectID"/>
-                <input type="hidden" value="${quiz.quizTime}" name="quizTime"/>
-                <input type="hidden" value="${quiz.numberOfQuestion}" name="numberOfQuestion"/>
+                <input type="hidden" value="${requestScope.quizSubject.id}" name="subjectID"/>
+                <input type="hidden" value="${requestScope.quizSubject.quizTime}" name="quizTime"/>
+                <input type="hidden" value="${requestScope.quizSubject.numberOfQuestion}" name="numberOfQuestion"/>
             </form>
         </c:if>
 

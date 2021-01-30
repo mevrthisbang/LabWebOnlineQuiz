@@ -35,7 +35,7 @@ public class LoadQuizController extends HttpServlet {
         } catch (Exception e) {
             log("ERROR at LoadQuizController: "+e.getMessage());
         }finally{
-            request.getRequestDispatcher("quizList.jsp").forward(request, response);
+            request.getRequestDispatcher("quizSubject.jsp").forward(request, response);
         }
     }
 
