@@ -34,14 +34,11 @@ public class QuizAnswerObj implements Serializable {
         this.student = student;
     }
 
-    public void addAnswer(String questionID, String answerID) throws Exception {
-        AnswerDTO answer = new AnswerDTO();
-        answer.setId(answerID);
-        studentAnswer.put(questionID, answer);
-    }
-
     public void updateAnswer(String questionID, String answerID) throws Exception {
         AnswerDTO answer = studentAnswer.get(questionID);
+        if(answer==null){
+            answer=new AnswerDTO();
+        }
         answer.setId(answerID);
         studentAnswer.put(questionID, answer);
     }

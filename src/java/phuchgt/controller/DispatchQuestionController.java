@@ -101,8 +101,6 @@ public class DispatchQuestionController extends HttpServlet {
                 String answerID = request.getParameter("answerChoice");
                 if (studentAnswer.getStudentAnswer().containsKey(questionID)) {
                     studentAnswer.updateAnswer(questionID, answerID);
-                } else {
-                    studentAnswer.addAnswer(questionID, answerID);
                 }
                 session.setAttribute("STUDENTANSWER", studentAnswer);
                 request.setAttribute("Question", listQuestionWithAnswers.keySet().toArray()[currentQuestion - 1]);

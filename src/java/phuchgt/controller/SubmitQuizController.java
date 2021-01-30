@@ -7,14 +7,17 @@ package phuchgt.controller;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import phuchgt.dao.AnswerDAO;
+import phuchgt.dao.QuestionDAO;
 import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dao.SubjectDAO;
+import phuchgt.dto.QuestionDTO;
 import phuchgt.dto.QuizAnswerObj;
 import phuchgt.dto.QuizDetailDTO;
 
@@ -28,36 +31,6 @@ public class SubmitQuizController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setAttribute("ERROR", "You do not have permission to do this");
-        request.getRequestDispatcher("error.jsp").forward(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
         String url=ERROR;
         try {
             HttpSession session = request.getSession();
@@ -66,7 +39,16 @@ public class SubmitQuizController extends HttpServlet {
             float scorePerQuestion = (float) (10 * 1.0) / studentAnswer.getStudentAnswer().size();
             float score;
             AnswerDAO answerDAO = new AnswerDAO();
+            
             int numberOfCorrect = 0;
+            if(studentAnswer==null){
+                studentAnswer=new QuizAnswerObj(quizDetail.getStudentID());
+                QuestionDAO questionDAO=new QuestionDAO();
+                List<QuestionDTO> listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
+                    for (QuestionDTO questionDTO : listQuestion) {
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), null);
+                    }
+            }
             for (String question : studentAnswer.getStudentAnswer().keySet()) {
                 boolean isCorrectAnswer = false;
                 if (studentAnswer.getStudentAnswer().get(question).getId() != null) {
@@ -101,6 +83,36 @@ public class SubmitQuizController extends HttpServlet {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
+        
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**

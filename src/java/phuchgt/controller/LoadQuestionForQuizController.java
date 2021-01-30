@@ -21,6 +21,7 @@ import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dto.AccountDTO;
 import phuchgt.dto.AnswerDTO;
 import phuchgt.dto.QuestionDTO;
+import phuchgt.dto.QuizAnswerObj;
 import phuchgt.dto.QuizDetailDTO;
 
 /**
@@ -38,6 +39,11 @@ public class LoadQuestionForQuizController extends HttpServlet {
         try {
             HttpSession session = request.getSession();
             QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
+            QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
+            AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
+            if(studentAnswer==null){
+                studentAnswer=new QuizAnswerObj(loginUser.getEmail());
+            }
             QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
             Date timeEndQuiz = null;
             List<QuestionDTO> listQuestion=null;
@@ -59,7 +65,7 @@ public class LoadQuestionForQuizController extends HttpServlet {
                 calendar.add(Calendar.MINUTE, quizTime);
                 calendar.add(Calendar.SECOND, 2);
                 timeEndQuiz = calendar.getTime();
-                AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
+                
                 quizDetail = new QuizDetailDTO();
                 quizDetail.setId(subjectID + "_" + loginUser.getEmail());
                 quizDetail.setSubjectID(subjectID);
@@ -71,7 +77,9 @@ public class LoadQuestionForQuizController extends HttpServlet {
                     listQuestionWithAnswers.clear();
                     listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
                     for (QuestionDTO questionDTO : listQuestion) {
+                        
                         listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfStuQuestion(questionDTO.getId()));
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), null);
                     }
                 }
             } else {
@@ -80,11 +88,13 @@ public class LoadQuestionForQuizController extends HttpServlet {
                     listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
                     for (QuestionDTO questionDTO : listQuestion) {
                         listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfStuQuestion(questionDTO.getId()));
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), null);
                     }
                 }else{
                     timeEndQuiz=quizDetail.getEstimateFinishTime();
                 }
             }
+            session.setAttribute("STUDENTANSWER", studentAnswer);
             session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
             session.setAttribute("listQuestionQuiz", listQuestionWithAnswers);
             session.setAttribute("timeEndQuiz", timeEndQuiz);
