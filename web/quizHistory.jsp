@@ -57,26 +57,29 @@
                 <input type="submit" value="Search" class="btn btn-primary"/>
             </div>
         </form>
+        <div class="container">
+            <div class="center">
+                <table id="listQuizHistory" class="display" style="width:50%">
+                    <thead>
+                        <tr>
+                            <th>SubjectID</th>
+                            <th>Number Of Correct</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${requestScope.listQuizHistory}" var="history">
+                            <tr>
+                                <td>${history.subjectID}</td>
+                                <td>${history.numberOfCorrect}</td>
+                                <td>${history.score}</td>
+                            </tr>
+                        </c:forEach>
 
-        <table id="listQuizHistory" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>SubjectID</th>
-                    <th>Number Of Correct</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach items="${requestScope.listQuizHistory}" var="history">
-                    <tr>
-                        <td>${history.subjectID}</td>
-                        <td>${history.numberOfCorrect}</td>
-                        <td>${history.score}</td>
-                    </tr>
-                </c:forEach>
-
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </body>
 </html>
 <script>
