@@ -107,11 +107,10 @@ public class QuizDetailDAO implements Serializable {
             preStmDetail = conn.prepareStatement(sqlUpdateDetail);
             preStmStuAnswer = conn.prepareStatement(sqlInsertStuAnswer);
             conn.setAutoCommit(false);
-            preStmDetail.setString(1, quizDetail.getSubjectID());
-            preStmDetail.setFloat(2, quizDetail.getScore());
-            preStmDetail.setInt(3, quizDetail.getNumberOfCorrect());
-            preStmDetail.setTimestamp(4, new Timestamp(quizDetail.getFinishedAt().getTime()));
-            preStmDetail.setString(5, quizDetail.getId());
+            preStmDetail.setFloat(1, quizDetail.getScore());
+            preStmDetail.setInt(2, quizDetail.getNumberOfCorrect());
+            preStmDetail.setTimestamp(3, new Timestamp(quizDetail.getFinishedAt().getTime()));
+            preStmDetail.setString(4, quizDetail.getId());
             preStmDetail.executeUpdate();
             int count = 1;
             for (String question : studentAnswer.keySet()) {

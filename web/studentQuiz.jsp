@@ -18,45 +18,42 @@
         <script src= "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link href="css/style_1.css" rel="stylesheet"/>
         <link href="css/style_2.css" rel="stylesheet"/>
-        
+
     </head>
     <body>
         <div class="header_bottom" style="background-color:  #d1d1e0;">
-                <div class="container">
-                    <div class="row" >
-                        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                            <!-- logo start -->
-                            <div class="logo"> <a href=""><img src="img/logo.png" alt="logo" /></a> </div>
-                            <!-- logo end -->
-                        </div>
-                        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                            <!-- menu start -->
-                            <div class="menu_side">
-                                <div id="navbar_menu">
-                                    <ul class="first-ul">
-                                        <li> <a class="active" href="MainController">Home</a>
-                                        </li>
-                                        <li><a href="createForm.jsp">Create new Food</a></li>
-                                            <c:url var="logoutLink" value="MainController">
-                                                <c:param name="action" value="Logout"/>
-                                            </c:url>
-                                        <li><a href="${logoutLink}">Logout</a></li>
-                                </div>
-                                <!-- menu end -->
+            <div class="container">
+                <div class="row" >
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <!-- logo start -->
+                        <div class="logo"> <a href="loadSubject"><img src="img/logo.png" alt="logo" /></a> </div>
+                        <!-- logo end -->
+                    </div>
+                    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                        <!-- menu start -->
+                        <div class="menu_side">
+                            <div id="navbar_menu">
+                                <ul class="first-ul">
+                                    <li> <a class="active" href="loadSubject">Home</a>
+                                    </li>
+                                    <li><a href="getQuizHistory">Quiz History</a></li>
+                                    <li><a href="logout">Logout</a></li>
                             </div>
+                            <!-- menu end -->
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         <form action="dispatchQuestion" method="POST" id="form">
             <div class="float-sm-left" style="margin: 20px; max-width: 350px; padding-bottom: 10px; margin-left: 200px;">
-            <c:forEach begin="1" end="${sessionScope.listQuestionQuiz.size()}" var="i">
-                <input type="submit" class="btn btn-primary" style="margin-top: 10px; margin-right: 10px; max-width: 40px; max-height: 40px;<c:if test="${requestScope.currentQuestion eq i}">background-color: #707070;</c:if>" value="${i}" name="dispatchRandom"/>
-            </c:forEach>
+                <c:forEach begin="1" end="${sessionScope.listQuestionQuiz.size()}" var="i">
+                    <input type="submit" class="btn btn-primary" style="margin-top: 10px; margin-right: 10px; max-width: 40px; max-height: 40px;<c:if test="${requestScope.currentQuestion eq i}">background-color: #707070;</c:if>" value="${i}" name="dispatchRandom"/>
+                </c:forEach>
                 <div class="center">
                     <input type="submit" value="Finish Attempt" name="action" style="width: 150px; margin-top: 10px;"/>
                 </div>
-        </div><br>
+            </div><br>
             <div class="wrapper bg-white rounded">
                 <p id="time" class="text-muted"></p>
                 <div class="content">

@@ -43,9 +43,9 @@
             </div>
         <div class="container" style="margin-top: 50px;">
             <div class="center">
-                <h1>${requestScope.quizSubject.name} - ${requestScope.quizSubject.id}</h1>
+                <h1>Quiz Subject ${requestScope.quizSubject.name} - ${requestScope.quizSubject.id}</h1>
             </div>
-            <div class="center">
+            <div class="center" style="margin-top: 20px;">
                 <p>${requestScope.quizSubject.quizDescription}</p>
             </div>
             <div class="center">
@@ -54,7 +54,7 @@
             <div class="center">
                 <p>Time limit: ${requestScope.quizSubject.quizTime} minutes</p>
             </div>
-            <div class="center">
+            <div class="center" style="margin-top: 20px;">
                 <table border="1" class="table table-bordered">
                     <thead>
                         <tr>

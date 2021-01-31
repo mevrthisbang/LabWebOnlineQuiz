@@ -7,7 +7,6 @@ package phuchgt.controller;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import phuchgt.dto.SubjectDTO;
  */
 public class LoadQuizController extends HttpServlet {
 
-    private static final String NORMAL = "quizSubject";
+    private static final String NORMAL = "quizSubject.jsp";
     private static final String AUTOSUBMIT = "SubmitQuizController";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

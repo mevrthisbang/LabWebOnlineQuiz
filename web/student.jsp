@@ -20,36 +20,50 @@
     </head>
     <body>
         <div class="header_bottom" style="background-color:  #d1d1e0;">
-                <div class="container">
-                    <div class="row" >
-                        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                            <!-- logo start -->
-                            <div class="logo"> <a href="loadSubject"><img src="img/logo.png" alt="logo" /></a> </div>
-                            <!-- logo end -->
-                        </div>
-                        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                            <!-- menu start -->
-                            <div class="menu_side">
-                                <div id="navbar_menu">
-                                    <ul class="first-ul">
-                                        <li> <a class="active" href="loadSubject">Home</a>
-                                        </li>
-                                        <li><a href="getQuizHistory">Quiz History</a></li>
-                                        <li><a href="logout">Logout</a></li>
-                                </div>
-                                <!-- menu end -->
+            <div class="container">
+                <div class="row" >
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <!-- logo start -->
+                        <div class="logo"> <a href="loadSubject"><img src="img/logo.png" alt="logo" /></a> </div>
+                        <!-- logo end -->
+                    </div>
+                    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                        <!-- menu start -->
+                        <div class="menu_side">
+                            <div id="navbar_menu">
+                                <ul class="first-ul">
+                                    <li> <a class="active" href="loadSubject">Home</a>
+                                    </li>
+                                    <li><a href="getQuizHistory">Quiz History</a></li>
+                                    <li><a href="logout">Logout</a></li>
                             </div>
+                            <!-- menu end -->
                         </div>
                     </div>
                 </div>
             </div>
-        <font color="red">Welcome, ${sessionScope.USER.fullname}</font>
-        <h1>List Subject</h1>
-    <c:forEach items="${applicationScope.listSubjects}" var="subject">
-        <c:url var="getQuizLink" value="loadQuiz">
-            <c:param name="subjectID" value="${subject.id}"/>
-        </c:url>
-        <a href="${getQuizLink}">${subject.id} - ${subject.name}</a>
-    </c:forEach>
+        </div>
+        <div class="container">
+            <div class="center"  style="padding-bottom: 50px; padding-top: 50px;">
+                <font color="red">Welcome, ${sessionScope.USER.fullname}</font>
+            </div>
+
+            <c:forEach items="${applicationScope.listSubjects}" var="subject">
+                <c:url var="getQuizLink" value="loadQuiz">
+                    <c:param name="subjectID" value="${subject.id}"/>
+                </c:url>
+                <a href="${getQuizLink}" class="center">
+                    <div class="card text-center" style="margin-top: 20px; width: 50%;">
+
+                        <div class="card-body">
+                            ${subject.id} - ${subject.name}
+                        </div>
+
+                    </div></a>
+                </c:forEach>
+        </div>
+
+
+
     </body>
 </html>
