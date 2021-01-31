@@ -42,12 +42,13 @@ public class LoadQuizController extends HttpServlet {
             if (quizDetail != null) {
                 if (quizDetail.getStatus() != null && quizDetail.getStatus().equals("Completed")) {
                     request.setAttribute("Status", quizDetail.getStatus());
-                } else if (quizDetail.getEstimateFinishTime().after(new Date())) {
-                    url = AUTOSUBMIT;
-                } else {
-                    quizDetail.setId(subjectID + "_" + loginUser.getEmail());
-                    session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
                 }
+                if (quizDetail.getStatus().equals("In Progress") && quizDetail.getEstimateFinishTime().before(new Date())) {
+                    url = AUTOSUBMIT;
+                }
+                quizDetail.setId(subjectID + "_" + loginUser.getEmail());
+                session.setAttribute("STUDENTQUIZDETAIL", quizDetail);
+
             }
             request.setAttribute("quizSubject", quizSubject);
 

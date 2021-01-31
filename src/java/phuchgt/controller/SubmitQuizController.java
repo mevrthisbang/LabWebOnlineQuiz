@@ -36,19 +36,18 @@ public class SubmitQuizController extends HttpServlet {
             HttpSession session = request.getSession();
             QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
             QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
-            float scorePerQuestion = (float) (10 * 1.0) / studentAnswer.getStudentAnswer().size();
-            float score;
             AnswerDAO answerDAO = new AnswerDAO();
-            
             int numberOfCorrect = 0;
             if(studentAnswer==null){
                 studentAnswer=new QuizAnswerObj(quizDetail.getStudentID());
                 QuestionDAO questionDAO=new QuestionDAO();
                 List<QuestionDTO> listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
                     for (QuestionDTO questionDTO : listQuestion) {
-                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), null);
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), answerDAO.getStuAnswerByQuestionID(questionDTO.getId()));
                     }
             }
+            float scorePerQuestion = (float) (10 * 1.0) / studentAnswer.getStudentAnswer().size();
+            float score;
             for (String question : studentAnswer.getStudentAnswer().keySet()) {
                 boolean isCorrectAnswer = false;
                 if (studentAnswer.getStudentAnswer().get(question).getId() != null) {
@@ -65,7 +64,7 @@ public class SubmitQuizController extends HttpServlet {
             quizDetail.setNumberOfCorrect(numberOfCorrect);
             quizDetail.setScore(score);
             QuizDetailDAO dao = new QuizDetailDAO();
-            if (dao.updateQuizDetailAndInsertStuAnswer(quizDetail, studentAnswer.getStudentAnswer())) {
+            if (dao.updateQuizDetail(quizDetail)&&dao.updateStuAnswer(studentAnswer.getStudentAnswer())) {
                 request.setAttribute("score", score);
                 request.setAttribute("numberOfCorrect", numberOfCorrect);
                 SubjectDAO subjectDAO=new SubjectDAO();

@@ -105,4 +105,24 @@ public class AnswerDAO implements Serializable{
         }
         return check;
     }
+    public AnswerDTO getStuAnswerByQuestionID(String questionID) throws Exception{
+        String id;
+        AnswerDTO result=null;
+        try {
+            conn=MyConnection.getMyConnection();
+            String sql="Select answerID\n"
+                    + "From STUDENTANSWER\n"
+                    + "Where questionID=?\n";
+            preStm=conn.prepareStatement(sql);
+            preStm.setString(1, questionID);
+            rs=preStm.executeQuery();
+            while(rs.next()){
+                id=rs.getString("answerID");
+                result=new AnswerDTO(id, "");
+            }
+        } finally{
+            closeConnection();
+        }
+        return result;
+    }
 }

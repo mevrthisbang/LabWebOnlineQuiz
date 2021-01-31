@@ -41,12 +41,12 @@ public class LoadQuestionForQuizController extends HttpServlet {
             QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
             QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
             AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
-            if(studentAnswer==null){
-                studentAnswer=new QuizAnswerObj(loginUser.getEmail());
+            if (studentAnswer == null) {
+                studentAnswer = new QuizAnswerObj(loginUser.getEmail());
             }
             QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
             Date timeEndQuiz = null;
-            List<QuestionDTO> listQuestion=null;
+            List<QuestionDTO> listQuestion = null;
             QuestionDAO questionDAO = new QuestionDAO();
             AnswerDAO answerDAO = new AnswerDAO();
             LinkedHashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (LinkedHashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
@@ -65,7 +65,7 @@ public class LoadQuestionForQuizController extends HttpServlet {
                 calendar.add(Calendar.MINUTE, quizTime);
                 calendar.add(Calendar.SECOND, 2);
                 timeEndQuiz = calendar.getTime();
-                
+
                 quizDetail = new QuizDetailDTO();
                 quizDetail.setId(subjectID + "_" + loginUser.getEmail());
                 quizDetail.setSubjectID(subjectID);
@@ -77,22 +77,24 @@ public class LoadQuestionForQuizController extends HttpServlet {
                     listQuestionWithAnswers.clear();
                     listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
                     for (QuestionDTO questionDTO : listQuestion) {
-                        
                         listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfStuQuestion(questionDTO.getId()));
-                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), null);
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), new AnswerDTO());
                     }
+                    quizDetailDAO.insertStuAnswer(studentAnswer.getStudentAnswer());
+                } else {
+                    request.setAttribute("ERROR", "Insert quiz detail fail");
                 }
             } else {
-                if(listQuestionWithAnswers==null){
+                if (listQuestionWithAnswers == null) {
                     listQuestionWithAnswers = new LinkedHashMap<>();
                     listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
                     for (QuestionDTO questionDTO : listQuestion) {
                         listQuestionWithAnswers.put(questionDTO, answerDAO.listAnswerOfStuQuestion(questionDTO.getId()));
-                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), null);
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), answerDAO.getStuAnswerByQuestionID(questionDTO.getId()));
                     }
-                }else{
-                    timeEndQuiz=quizDetail.getEstimateFinishTime();
                 }
+                timeEndQuiz = quizDetail.getEstimateFinishTime();
+
             }
             session.setAttribute("STUDENTANSWER", studentAnswer);
             session.setAttribute("STUDENTQUIZDETAIL", quizDetail);

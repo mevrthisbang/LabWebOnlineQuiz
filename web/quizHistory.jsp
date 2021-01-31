@@ -59,7 +59,7 @@
         </form>
         <div class="container">
             <div class="center">
-                <table id="listQuizHistory" class="display" style="width:50%">
+                <table id="listQuizHistory" class="display" style="width:100%">
                     <thead>
                         <tr>
                             <th>SubjectID</th>

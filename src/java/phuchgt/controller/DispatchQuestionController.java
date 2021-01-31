@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dto.AccountDTO;
 import phuchgt.dto.AnswerDTO;
 import phuchgt.dto.QuestionDTO;
@@ -99,8 +100,10 @@ public class DispatchQuestionController extends HttpServlet {
                 }
                 String questionID = request.getParameter("questionID");
                 String answerID = request.getParameter("answerChoice");
+                QuizDetailDAO dao=new QuizDetailDAO();
                 if (studentAnswer.getStudentAnswer().containsKey(questionID)) {
                     studentAnswer.updateAnswer(questionID, answerID);
+                    dao.updateStuAnswer(studentAnswer.getStudentAnswer());
                 }
                 session.setAttribute("STUDENTANSWER", studentAnswer);
                 request.setAttribute("Question", listQuestionWithAnswers.keySet().toArray()[currentQuestion - 1]);

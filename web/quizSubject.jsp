@@ -72,15 +72,15 @@
                     <c:if test="${!testNull&&sessionScope.STUDENTQUIZDETAIL.subjectID ne requestScope.quizSubject.id}">
                         <p>Done the quiz you selected first</p>
                     </c:if>
-                    <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.subjectID eq requestScope.quizSubject.id}">
+                    <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.subjectID eq requestScope.quizSubject.id&&requestScope.Status==null}" var="testStatus">
                         <div class="center">
                             <input type="submit" value="Continue Attempt" class="btn btn-large"/>
                         </div>
 
                     </c:if>
-                    <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.status eq 'In Progress'}">
+                    <c:if test="${!testStatus}">
                         <div class="center">
-                            <input type="submit" value="Continue Attempt" class="btn btn-large"/>
+                            <p>You have done this quiz already. Please check history</p>
                         </div>
                     </c:if>
                     <input type="hidden" value="${requestScope.quizSubject.id}" name="subjectID"/>

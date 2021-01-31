@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import phuchgt.db.MyConnection;
@@ -52,8 +53,8 @@ public class QuizDetailDAO implements Serializable {
         boolean check = false;
         try {
             conn = MyConnection.getMyConnection();
-            String sqlInsertDetail = "Insert Into STUDENTQUIZDETAIL(id, student, startedAt, estimateFinishTime, subject)\n"
-                    + "Values(?,?,?,?,?)";
+            String sqlInsertDetail = "Insert Into STUDENTQUIZDETAIL(id, student, startedAt, estimateFinishTime, subject, status)\n"
+                    + "Values(?,?,?,?,?,?)";
             String sqlInsertStuQuestionQuiz = "Insert Into STUDENTQUIZQUESTION(id, quizTake, question, questionContent)\n"
                     + "Values(?,?,?,?)";
             String sqlInsertStuQuestionAnswer = "Insert Into STUDENTQUIZANSWER(id, question, answerContent, isCorrectAnswer)\n"
@@ -67,6 +68,7 @@ public class QuizDetailDAO implements Serializable {
             preStmDetail.setTimestamp(3, new Timestamp(quizDetail.getStartedAt().getTime()));
             preStmDetail.setTimestamp(4, new Timestamp(quizDetail.getEstimateFinishTime().getTime()));
             preStmDetail.setString(5, quizDetail.getSubjectID());
+            preStmDetail.setString(6, quizDetail.getStatus());
             preStmDetail.executeUpdate();
             int count = 1;
             for (QuestionDTO question : studentQuestionQuiz.keySet()) {
@@ -95,35 +97,60 @@ public class QuizDetailDAO implements Serializable {
         return check;
     }
 
-    public boolean updateQuizDetailAndInsertStuAnswer(QuizDetailDTO quizDetail, HashMap<String, AnswerDTO> studentAnswer) throws Exception {
+    public boolean insertStuAnswer(HashMap<String, AnswerDTO> studentAnswer) throws Exception {
         boolean check = true;
+        try {
+            conn = MyConnection.getMyConnection();
+            String sqlInsertStuAnswer = "Insert STUDENTANSWER(questionID, answerID, isCorrect)\n"
+                    + "Values(?,?,?)";
+            preStmStuAnswer = conn.prepareStatement(sqlInsertStuAnswer);
+            for (String question : studentAnswer.keySet()) {
+                preStmStuAnswer.setString(1, question);
+                preStmStuAnswer.setString(2, studentAnswer.get(question).getId());
+                preStmStuAnswer.setBoolean(3, studentAnswer.get(question).isIsCorrectAnswer());
+                preStmStuAnswer.executeUpdate();
+            }
+            check = true;
+        } finally {
+            closeConnection();
+        }
+        return check;
+    }
+
+    public boolean updateStuAnswer(HashMap<String, AnswerDTO> studentAnswer) throws Exception {
+        boolean check = true;
+        try {
+            conn = MyConnection.getMyConnection();
+            String sqlUpdateStuAnswer = "Update STUDENTANSWER\n"
+                    + "Set answerID=?, isCorrect=?\n"
+                    + "Where questionID=?";
+            preStmStuAnswer = conn.prepareStatement(sqlUpdateStuAnswer);
+            for (String question : studentAnswer.keySet()) {
+                preStmStuAnswer.setString(1, studentAnswer.get(question).getId());
+                preStmStuAnswer.setBoolean(2, studentAnswer.get(question).isIsCorrectAnswer());
+                preStmStuAnswer.setString(3, question);
+                preStmStuAnswer.executeUpdate();
+            }
+            check = true;
+        } finally {
+            closeConnection();
+        }
+        return check;
+    }
+
+    public boolean updateQuizDetail(QuizDetailDTO quizDetail) throws Exception {
+        boolean check = false;
         try {
             conn = MyConnection.getMyConnection();
             String sqlUpdateDetail = "Update STUDENTQUIZDETAIL\n"
                     + "Set score=?, numberOfCorrect=?, finishedAt=?, status='Completed'\n"
                     + "Where id=?";
-            String sqlInsertStuAnswer = "Insert STUDENTANSWER(id, questionID, answerID, isCorrect)\n"
-                    + "Values(?,?,?,?)";
             preStmDetail = conn.prepareStatement(sqlUpdateDetail);
-            preStmStuAnswer = conn.prepareStatement(sqlInsertStuAnswer);
-            conn.setAutoCommit(false);
             preStmDetail.setFloat(1, quizDetail.getScore());
             preStmDetail.setInt(2, quizDetail.getNumberOfCorrect());
             preStmDetail.setTimestamp(3, new Timestamp(quizDetail.getFinishedAt().getTime()));
             preStmDetail.setString(4, quizDetail.getId());
-            preStmDetail.executeUpdate();
-            int count = 1;
-            for (String question : studentAnswer.keySet()) {
-                preStmStuAnswer.setString(1, question + "_" + count);
-                preStmStuAnswer.setString(2, question);
-                preStmStuAnswer.setString(3, studentAnswer.get(question).getId());
-                preStmStuAnswer.setBoolean(4, studentAnswer.get(question).isIsCorrectAnswer());
-                preStmStuAnswer.executeUpdate();
-                count++;
-            }
-            conn.commit();
-            conn.setAutoCommit(true);
-            check = true;
+            check = preStmDetail.executeUpdate() > 0;
         } finally {
             closeConnection();
         }
@@ -132,7 +159,7 @@ public class QuizDetailDAO implements Serializable {
 
     public List<QuizDetailDTO> getListQuizHistory(String name, String loginUser) throws Exception {
         List<QuizDetailDTO> result = null;
-        QuizDetailDTO dto=null;
+        QuizDetailDTO dto = null;
         String subjectID;
         float score;
         int numberOfCorrect;
@@ -147,12 +174,12 @@ public class QuizDetailDAO implements Serializable {
             preStmDetail.setString(1, loginUser);
             preStmDetail.setString(2, "%" + name + "%");
             rs = preStmDetail.executeQuery();
-            result=new ArrayList<>();
+            result = new ArrayList<>();
             while (rs.next()) {
-                subjectID=rs.getString("subject");
-                score=rs.getFloat("score");
-                numberOfCorrect=rs.getInt("numberOfCorrect");
-                dto=new QuizDetailDTO();
+                subjectID = rs.getString("subject");
+                score = rs.getFloat("score");
+                numberOfCorrect = rs.getInt("numberOfCorrect");
+                dto = new QuizDetailDTO();
                 dto.setSubjectID(subjectID);
                 dto.setScore(score);
                 dto.setNumberOfCorrect(numberOfCorrect);
@@ -175,10 +202,14 @@ public class QuizDetailDAO implements Serializable {
             preStmDetail.setString(1, id);
             rs = preStmDetail.executeQuery();
             if (rs.next()) {
+                Date estimateFinishTime = new Date(rs.getTimestamp("estimateFinishTime").getTime());
+                String status = rs.getString("status");
+                String subject = rs.getString("subject");
                 result = new QuizDetailDTO();
-                result.setEstimateFinishTime(rs.getDate("estimateFinishTime"));
-                result.setStatus(rs.getString("status"));
-                result.setSubjectID(rs.getString("subject"));
+                result.setEstimateFinishTime(estimateFinishTime);
+                result.setStatus(status);
+                result.setSubjectID(subject);
+                result.setId(id);
             }
         } finally {
             closeConnection();
