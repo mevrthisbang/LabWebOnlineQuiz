@@ -103,7 +103,7 @@ public class DispatchQuestionController extends HttpServlet {
                 QuizDetailDAO dao=new QuizDetailDAO();
                 if (studentAnswer.getStudentAnswer().containsKey(questionID)) {
                     studentAnswer.updateAnswer(questionID, answerID);
-                    dao.updateStuAnswer(studentAnswer.getStudentAnswer());
+                    dao.updateStuAnswer(questionID, studentAnswer.getStudentAnswer().get(questionID));
                 }
                 session.setAttribute("STUDENTANSWER", studentAnswer);
                 request.setAttribute("Question", listQuestionWithAnswers.keySet().toArray()[currentQuestion - 1]);

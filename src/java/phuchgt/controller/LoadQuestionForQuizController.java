@@ -37,23 +37,26 @@ public class LoadQuestionForQuizController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try {
+            String subjectID = request.getParameter("subjectID");
+            String quizID = request.getParameter("quizID");
+            int quizTime = Integer.parseInt(request.getParameter("quizTime"));
+            int numberOfQuestion = Integer.parseInt(request.getParameter("numberOfQuestion"));
             HttpSession session = request.getSession();
-            QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
+
             QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
             AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
             if (studentAnswer == null) {
                 studentAnswer = new QuizAnswerObj(loginUser.getEmail());
             }
             QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
+            QuizDetailDTO quizDetail = quizDetailDAO.getQuizDetailById(quizID + "_" + loginUser.getEmail());
             Date timeEndQuiz = null;
             List<QuestionDTO> listQuestion = null;
             QuestionDAO questionDAO = new QuestionDAO();
             AnswerDAO answerDAO = new AnswerDAO();
             LinkedHashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (LinkedHashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
             if (quizDetail == null) {
-                String subjectID = request.getParameter("subjectID");
-                int quizTime = Integer.parseInt(request.getParameter("quizTime"));
-                int numberOfQuestion = Integer.parseInt(request.getParameter("numberOfQuestion"));
+
                 listQuestion = questionDAO.generateListQuestion(subjectID, numberOfQuestion);
                 listQuestionWithAnswers = new LinkedHashMap<>();
                 for (QuestionDTO questionDTO : listQuestion) {
@@ -67,8 +70,8 @@ public class LoadQuestionForQuizController extends HttpServlet {
                 timeEndQuiz = calendar.getTime();
 
                 quizDetail = new QuizDetailDTO();
-                quizDetail.setId(subjectID + "_" + loginUser.getEmail());
-                quizDetail.setSubjectID(subjectID);
+                quizDetail.setId(quizID + "_" + loginUser.getEmail());
+                quizDetail.setQuizID(quizID);
                 quizDetail.setStudentID(loginUser.getEmail());
                 quizDetail.setStartedAt(date);
                 quizDetail.setStatus("In Progress");
@@ -94,7 +97,6 @@ public class LoadQuestionForQuizController extends HttpServlet {
                     }
                 }
                 timeEndQuiz = quizDetail.getEstimateFinishTime();
-
             }
             session.setAttribute("STUDENTANSWER", studentAnswer);
             session.setAttribute("STUDENTQUIZDETAIL", quizDetail);

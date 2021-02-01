@@ -37,6 +37,9 @@ public class LoadSubjectController extends HttpServlet {
             log("ERROR at LoadSubjectController-init: "+e.getMessage());
         }
     }
+    private void autoSubmitIncompleteQuiz(){
+        
+    }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

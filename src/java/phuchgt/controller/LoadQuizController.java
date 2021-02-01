@@ -26,13 +26,10 @@ import phuchgt.dto.SubjectDTO;
  */
 public class LoadQuizController extends HttpServlet {
 
-    private static final String NORMAL = "quizDetail.jsp";
-    private static final String AUTOSUBMIT = "SubmitQuizController";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = NORMAL;
         try {
             HttpSession session = request.getSession();
             AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
@@ -46,11 +43,7 @@ public class LoadQuizController extends HttpServlet {
             QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
             QuizDetailDTO quizDetail = quizDetailDAO.getQuizDetailById(quizID + "_" + loginUser.getEmail());
             if (quizDetail != null) {
-                if (quizDetail.getStatus().equals("In Progress") && quizDetail.getEstimateFinishTime().before(new Date())) {
-                    url = AUTOSUBMIT;
-                } else {
-                    request.setAttribute("StudentQuizDetail", quizDetail);
-                }
+                request.setAttribute("StudentQuizDetail", quizDetail);
             }
             request.setAttribute("quizDetail", quiz);
             request.setAttribute("numberOfQuestion", numberOfQuestion);
@@ -59,7 +52,7 @@ public class LoadQuizController extends HttpServlet {
         } catch (Exception e) {
             log("ERROR at LoadQuizController: " + e.getMessage());
         } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+            request.getRequestDispatcher("quizDetail.jsp").forward(request, response);
         }
     }
 

@@ -26,28 +26,31 @@ import phuchgt.dto.QuizDetailDTO;
  * @author mevrthisbang
  */
 public class SubmitQuizController extends HttpServlet {
-    private static final String ERROR="error.jsp";
-    private static final String SUCCESS="quizResult.jsp";
+
+    private static final String ERROR = "error.jsp";
+    private static final String SUCCESS = "quizResult.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url=ERROR;
+        String url = ERROR;
         try {
             HttpSession session = request.getSession();
             QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
             QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
             AnswerDAO answerDAO = new AnswerDAO();
             int numberOfCorrect = 0;
-            if(studentAnswer==null){
-                studentAnswer=new QuizAnswerObj(quizDetail.getStudentID());
-                QuestionDAO questionDAO=new QuestionDAO();
+            if (studentAnswer == null) {
+                studentAnswer = new QuizAnswerObj(quizDetail.getStudentID());
+                QuestionDAO questionDAO = new QuestionDAO();
                 List<QuestionDTO> listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
-                    for (QuestionDTO questionDTO : listQuestion) {
-                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), answerDAO.getStuAnswerByQuestionID(questionDTO.getId()));
-                    }
+                for (QuestionDTO questionDTO : listQuestion) {
+                    studentAnswer.getStudentAnswer().put(questionDTO.getId(), answerDAO.getStuAnswerByQuestionID(questionDTO.getId()));
+                }
             }
             float scorePerQuestion = (float) (10 * 1.0) / studentAnswer.getStudentAnswer().size();
             float score;
+            QuizDetailDAO dao = new QuizDetailDAO();
             for (String question : studentAnswer.getStudentAnswer().keySet()) {
                 boolean isCorrectAnswer = false;
                 if (studentAnswer.getStudentAnswer().get(question).getId() != null) {
@@ -57,23 +60,24 @@ public class SubmitQuizController extends HttpServlet {
                     }
                 }
                 studentAnswer.getStudentAnswer().get(question).setIsCorrectAnswer(isCorrectAnswer);
+                dao.updateStuAnswer(question, studentAnswer.getStudentAnswer().get(question));
             }
             score = scorePerQuestion * numberOfCorrect;
             Date date = new Date();
             quizDetail.setFinishedAt(date);
             quizDetail.setNumberOfCorrect(numberOfCorrect);
             quizDetail.setScore(score);
-            QuizDetailDAO dao = new QuizDetailDAO();
-            if (dao.updateQuizDetail(quizDetail)&&dao.updateStuAnswer(studentAnswer.getStudentAnswer())) {
+
+            if (dao.updateQuizDetail(quizDetail)) {
                 request.setAttribute("score", score);
                 request.setAttribute("numberOfCorrect", numberOfCorrect);
-                SubjectDAO subjectDAO=new SubjectDAO();
+//                SubjectDAO subjectDAO = new SubjectDAO();
 //                request.setAttribute("quizSubject", subjectDAO.getSubjectQuizByID(quizDetail.getSubjectID()));
                 session.removeAttribute("STUDENTANSWER");
                 session.removeAttribute("STUDENTQUIZDETAIL");
                 session.removeAttribute("listQuestionQuiz");
                 session.removeAttribute("timeEndQuiz");
-                url=SUCCESS;
+                url = SUCCESS;
             } else {
                 request.setAttribute("ERROR", "There's some errors during submit quiz");
             }
@@ -82,7 +86,7 @@ public class SubmitQuizController extends HttpServlet {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

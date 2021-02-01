@@ -4,6 +4,7 @@
     Author     : mevrthisbang
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -60,20 +61,57 @@
                 <div class="center">
 
                 </div>
-                <form action="loadQuestionForQuiz" method="POST" style="padding-top: 20px;">
-                    <div class="center">
-                        <input type="submit" value="Start Quiz" class="btn btn-large"/>
-                    </div>
-                    <input type="hidden" value="${param.subjectID}" name="subjectID"/>
-                    <input type="hidden" value="${param.quizID}" name="quizID"/>
+                <c:if test="${requestScope.StudentQuizDetail==null}" var="testNull">
+                    <form action="loadQuestionForQuiz" method="POST" style="padding-top: 20px;">
+                        <div class="center">
+                            <input type="submit" value="Start Quiz" class="btn btn-large"/>
+                        </div>
+                        <input type="hidden" value="${param.subjectID}" name="subjectID"/>
+                        <input type="hidden" value="${param.quizID}" name="quizID"/>
 
-                    <input type="hidden" value="${requestScope.quizTime}" name="quizTime"/>
-                    <input type="hidden" value="${requestScope.numberOfQuestion}" name="numberOfQuestion"/>
-                </form>
+                        <input type="hidden" value="${requestScope.quizTime}" name="quizTime"/>
+                        <input type="hidden" value="${requestScope.numberOfQuestion}" name="numberOfQuestion"/>
+                    </form>
+                </c:if>
+                <c:if test="${!testNull&&requestScope.StudentQuizDetail.status eq 'Completed'}">
+                    <div class="center">
+                        <a href="loadSubject" class="btn btn-primary">Back to Homepage</a>
+                    </div>
+                    <table border="1" class="table table-bordered" style="background-color: #707070; color: #fff; margin-top: 50px; text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Number Of Correct</th>
+                                <th>Score</th>
+                                <th>Take Quiz Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${requestScope.StudentQuizDetail.numberOfCorrect}/${requestScope.numberOfQuestion}</td>
+                                <td>${requestScope.StudentQuizDetail.score}</td>
+                                <td><fmt:formatDate pattern = "dd/MM/yyyy" value = "${requestScope.StudentQuizDetail.startedAt}"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </c:if>
+                <c:if test="${!testNull&&requestScope.StudentQuizDetail.status eq 'In Progress'}">
+                    <form action="loadQuestionForQuiz" method="POST" style="padding-top: 20px;">
+                        <div class="center">
+                            <input type="submit" value="Continue Attemp" class="btn btn-large"/>
+                        </div>
+                        <input type="hidden" value="${param.subjectID}" name="subjectID"/>
+                        <input type="hidden" value="${param.quizID}" name="quizID"/>
+
+                        <input type="hidden" value="${requestScope.quizTime}" name="quizTime"/>
+                        <input type="hidden" value="${requestScope.numberOfQuestion}" name="numberOfQuestion"/>
+                    </form>
+                </c:if>
+
             </div>
-                    <c:if test="${requestScope.StudentQuizDetail.status!=null&&requestScope.StudentQuizDetail.status eq 'Completed'}">
-                        
-                    </c:if>
+            <c:if test="${requestScope.StudentQuizDetail.status!=null&&requestScope.StudentQuizDetail.status eq 'Completed'}">
+
+            </c:if>
         </c:if>
 
     </body>
