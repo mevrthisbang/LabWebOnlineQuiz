@@ -21,12 +21,10 @@ public class QuizDetailDTO implements Serializable{
     public QuizDetailDTO() {
     }
 
-    public QuizDetailDTO(String id, String subjectID, String studentID, Date startedAt, Date finishedAt, float score, int numberOfCorrect) {
+    public QuizDetailDTO(String id, String subjectID, String studentID, float score, int numberOfCorrect) {
         this.id = id;
         this.subjectID = subjectID;
         this.studentID = studentID;
-        this.startedAt = startedAt;
-        this.finishedAt = finishedAt;
         this.score = score;
         this.numberOfCorrect = numberOfCorrect;
     }

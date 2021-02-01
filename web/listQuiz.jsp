@@ -1,6 +1,6 @@
 <%-- 
-    Document   : student
-    Created on : Jan 22, 2021, 9:35:17 PM
+    Document   : listQuiz
+    Created on : Feb 1, 2021, 7:23:34 AM
     Author     : mevrthisbang
 --%>
 
@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Student Homepage</title>
+        <title>${param.subjectID}</title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" rel="stylesheet"/>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -45,18 +45,19 @@
         </div>
         <div class="container">
             <div class="center"  style="padding-bottom: 50px; padding-top: 50px;">
-                <font color="red">Welcome, ${sessionScope.USER.fullname}</font>
+                <h1>List Quiz</h1>
             </div>
 
-            <c:forEach items="${applicationScope.listSubjects}" var="subject">
-                <c:url var="getListQuizLink" value="loadListQuiz">
-                    <c:param name="subjectID" value="${subject.id}"/>
+            <c:forEach items="${requestScope.listQuiz}" var="quiz">
+                <c:url var="getQuizLink" value="loadQuiz">
+                    <c:param name="subjectID" value="${quiz.subjectID}"/>
+                    <c:param name="quizID" value="${quiz.id}"/>
                 </c:url>
-                <a href="${getListQuizLink}" class="center">
+                <a href="${getQuizLink}" class="center">
                     <div class="card text-center" style="margin-top: 20px; width: 50%;">
 
                         <div class="card-body">
-                            ${subject.id} - ${subject.name}
+                            ${quiz.name}
                         </div>
 
                     </div></a>

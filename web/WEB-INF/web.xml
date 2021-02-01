@@ -72,6 +72,14 @@
         <servlet-name>EditQuestionController</servlet-name>
         <servlet-class>phuchgt.controller.EditQuestionController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LoadListQuizController</servlet-name>
+        <servlet-class>phuchgt.controller.LoadListQuizController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>QuizDAO</servlet-name>
+        <servlet-class>phuchgt.dao.QuizDAO</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/LoginController</url-pattern>
@@ -135,6 +143,14 @@
     <servlet-mapping>
         <servlet-name>EditQuestionController</servlet-name>
         <url-pattern>/EditQuestionController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoadListQuizController</servlet-name>
+        <url-pattern>/LoadListQuizController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QuizDAO</servlet-name>
+        <url-pattern>/QuizDAO</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

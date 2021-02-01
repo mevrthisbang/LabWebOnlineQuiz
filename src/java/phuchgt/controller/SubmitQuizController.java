@@ -68,7 +68,7 @@ public class SubmitQuizController extends HttpServlet {
                 request.setAttribute("score", score);
                 request.setAttribute("numberOfCorrect", numberOfCorrect);
                 SubjectDAO subjectDAO=new SubjectDAO();
-                request.setAttribute("quizSubject", subjectDAO.getSubjectQuizByID(quizDetail.getSubjectID()));
+//                request.setAttribute("quizSubject", subjectDAO.getSubjectQuizByID(quizDetail.getSubjectID()));
                 session.removeAttribute("STUDENTANSWER");
                 session.removeAttribute("STUDENTQUIZDETAIL");
                 session.removeAttribute("listQuestionQuiz");

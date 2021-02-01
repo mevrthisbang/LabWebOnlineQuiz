@@ -195,7 +195,7 @@ public class QuizDetailDAO implements Serializable {
         QuizDetailDTO result = null;
         try {
             conn = MyConnection.getMyConnection();
-            String sql = "Select estimateFinishTime, status, subject\n"
+            String sql = "Select estimateFinishTime, status, subject, score, numberOfCorrect, startedAt, student\n"
                     + "From STUDENTQUIZDETAIL\n"
                     + "Where id=?";
             preStmDetail = conn.prepareStatement(sql);
@@ -205,11 +205,12 @@ public class QuizDetailDAO implements Serializable {
                 Date estimateFinishTime = new Date(rs.getTimestamp("estimateFinishTime").getTime());
                 String status = rs.getString("status");
                 String subject = rs.getString("subject");
-                result = new QuizDetailDTO();
+                String student=rs.getString("student");
+                int score=rs.getInt("score");
+                int numberOfCorrect=rs.getInt("numberOfCorrect");
+                result = new QuizDetailDTO(id, subject, student, score, numberOfCorrect);
                 result.setEstimateFinishTime(estimateFinishTime);
                 result.setStatus(status);
-                result.setSubjectID(subject);
-                result.setId(id);
             }
         } finally {
             closeConnection();

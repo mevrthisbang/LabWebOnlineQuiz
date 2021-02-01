@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Quiz ${requestScope.quizSubject.id} - ${requestScope.quizSubject.name}</title>
+        <title>${requestScope.quizDetail.name} - ${requestScope.quizDetail.subjectID}</title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" rel="stylesheet"/>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -43,52 +43,37 @@
                 </div>
             </div>
         </div>
-        <c:if test="${requestScope.quizSubject!=null}">
+        <c:if test="${requestScope.quizDetail!=null}">
             <div class="container" style="padding-top: 50px;">
                 <div class="center">
-                    <h1>Subject Quiz</h1>
+                    <h1>${requestScope.quizDetail.name}</h1>
                 </div>
-                <div class="center" style="padding-top: 20px;">
-                    Subject name: ${requestScope.quizSubject.name}
-                </div>
-                <div class="center">
-                    Time limit: ${requestScope.quizSubject.quizTime} minutes
+                <div class="center"  style="padding-top: 20px;">
+                    Time limit: ${requestScope.quizTime} minutes
                 </div>
                 <div class="center">
-                    Number of Question: ${requestScope.quizSubject.numberOfQuestion} questions
+                    Number of Question: ${requestScope.numberOfQuestion} questions
                 </div>
                 <div class="center">
-                    ${requestScope.quizSubject.quizDescription}
+                    Only 1 attempt
                 </div>
                 <div class="center">
 
                 </div>
                 <form action="loadQuestionForQuiz" method="POST" style="padding-top: 20px;">
-                    <c:if test="${sessionScope.STUDENTQUIZDETAIL==null}" var="testNull">
-                        <div class="center">
-                            <input type="submit" value="Start Quiz" class="btn btn-large"/>
-                        </div>
-                    </c:if>
-                    <c:if test="${!testNull&&sessionScope.STUDENTQUIZDETAIL.subjectID ne requestScope.quizSubject.id}">
-                        <p>Done the quiz you selected first</p>
-                    </c:if>
-                    <c:if test="${sessionScope.STUDENTQUIZDETAIL!=null&&sessionScope.STUDENTQUIZDETAIL.subjectID eq requestScope.quizSubject.id&&requestScope.Status==null}" var="testStatus">
-                        <div class="center">
-                            <input type="submit" value="Continue Attempt" class="btn btn-large"/>
-                        </div>
+                    <div class="center">
+                        <input type="submit" value="Start Quiz" class="btn btn-large"/>
+                    </div>
+                    <input type="hidden" value="${param.subjectID}" name="subjectID"/>
+                    <input type="hidden" value="${param.quizID}" name="quizID"/>
 
-                    </c:if>
-                    <c:if test="${!testStatus}">
-                        <div class="center">
-                            <p>You have done this quiz already. Please check history</p>
-                        </div>
-                    </c:if>
-                    <input type="hidden" value="${requestScope.quizSubject.id}" name="subjectID"/>
-                    <input type="hidden" value="${requestScope.quizSubject.quizTime}" name="quizTime"/>
-                    <input type="hidden" value="${requestScope.quizSubject.numberOfQuestion}" name="numberOfQuestion"/>
+                    <input type="hidden" value="${requestScope.quizTime}" name="quizTime"/>
+                    <input type="hidden" value="${requestScope.numberOfQuestion}" name="numberOfQuestion"/>
                 </form>
             </div>
-
+                    <c:if test="${requestScope.StudentQuizDetail.status!=null&&requestScope.StudentQuizDetail.status eq 'Completed'}">
+                        
+                    </c:if>
         </c:if>
 
     </body>
