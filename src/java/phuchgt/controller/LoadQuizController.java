@@ -6,7 +6,6 @@
 package phuchgt.controller;
 
 import java.io.IOException;
-import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,6 @@ import phuchgt.dao.SubjectDAO;
 import phuchgt.dto.AccountDTO;
 import phuchgt.dto.QuizDTO;
 import phuchgt.dto.QuizDetailDTO;
-import phuchgt.dto.SubjectDTO;
 
 /**
  *
@@ -26,33 +24,40 @@ import phuchgt.dto.SubjectDTO;
  */
 public class LoadQuizController extends HttpServlet {
 
+    private static final String ERROR = "error.jsp";
+    private static final String OKAY = "quizDetail.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String url=ERROR;
         try {
             HttpSession session = request.getSession();
             AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
-            String subjectID = request.getParameter("subjectID");
-            String quizID = request.getParameter("quizID");
-            SubjectDAO subjectDAO = new SubjectDAO();
-            int numberOfQuestion = subjectDAO.getSubjectNumberOfQuestionByID(subjectID);
-            int quizTime = subjectDAO.getSubjectQuizTimeByID(subjectID);
-            QuizDAO quizDAO = new QuizDAO();
-            QuizDTO quiz = quizDAO.getQuizDetailByID(quizID);
-            QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
-            QuizDetailDTO quizDetail = quizDetailDAO.getQuizDetailById(quizID + "_" + loginUser.getEmail());
-            if (quizDetail != null) {
-                request.setAttribute("StudentQuizDetail", quizDetail);
+            if (loginUser.getRole().equals("student")) {
+                String subjectID = request.getParameter("subjectID");
+                String quizID = request.getParameter("quizID");
+                SubjectDAO subjectDAO = new SubjectDAO();
+                int numberOfQuestion = subjectDAO.getSubjectNumberOfQuestionByID(subjectID);
+                int quizTime = subjectDAO.getSubjectQuizTimeByID(subjectID);
+                QuizDAO quizDAO = new QuizDAO();
+                QuizDTO quiz = quizDAO.getQuizDetailByID(quizID);
+                QuizDetailDAO quizDetailDAO = new QuizDetailDAO();
+                QuizDetailDTO quizDetail = quizDetailDAO.getQuizDetailById(quizID + "_" + loginUser.getEmail());
+                if (quizDetail != null) {
+                    request.setAttribute("StudentQuizDetail", quizDetail);
+                }
+                request.setAttribute("quizDetail", quiz);
+                request.setAttribute("numberOfQuestion", numberOfQuestion);
+                request.setAttribute("quizTime", quizTime);
+                url = OKAY;
+            } else {
+                request.setAttribute("ERROR", "You do not have permission to do this");
             }
-            request.setAttribute("quizDetail", quiz);
-            request.setAttribute("numberOfQuestion", numberOfQuestion);
-            request.setAttribute("quizTime", quizTime);
-
         } catch (Exception e) {
             log("ERROR at LoadQuizController: " + e.getMessage());
         } finally {
-            request.getRequestDispatcher("quizDetail.jsp").forward(request, response);
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

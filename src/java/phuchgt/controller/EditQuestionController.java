@@ -11,8 +11,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import phuchgt.dao.AnswerDAO;
 import phuchgt.dao.QuestionDAO;
+import phuchgt.dto.AccountDTO;
 import phuchgt.dto.AnswerDTO;
 import phuchgt.dto.QuestionDTO;
 
@@ -21,21 +23,33 @@ import phuchgt.dto.QuestionDTO;
  * @author mevrthisbang
  */
 public class EditQuestionController extends HttpServlet {
+
+    private static final String ERROR = "error.jsp";
+    private static final String OKAY = "updateForm.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String url=ERROR;
+        HttpSession session = request.getSession();
+        AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
         try {
-            String id=request.getParameter("id");
-            QuestionDAO questionDAO=new QuestionDAO();
-            QuestionDTO question=questionDAO.getQuestionByID(id);
-            AnswerDAO answerDAO=new AnswerDAO();
-            List<AnswerDTO> listAnswers=answerDAO.listAnswerOfQuestion(id);
-            request.setAttribute("Question", question);
-            request.setAttribute("listAnswers", listAnswers);
+            if (loginUser.getRole().equals("admin")) {
+                String id = request.getParameter("id");
+                QuestionDAO questionDAO = new QuestionDAO();
+                QuestionDTO question = questionDAO.getQuestionByID(id);
+                AnswerDAO answerDAO = new AnswerDAO();
+                List<AnswerDTO> listAnswers = answerDAO.listAnswerOfQuestion(id);
+                request.setAttribute("Question", question);
+                request.setAttribute("listAnswers", listAnswers);
+                url=OKAY;
+            } else {
+                request.setAttribute("ERROR", "You do not have permission to do this");
+            }
         } catch (Exception e) {
-            log("ERROR at EditQuestionController: "+e.getMessage());
-        }finally{
-            request.getRequestDispatcher("updateForm.jsp").forward(request, response);
+            log("ERROR at EditQuestionController: " + e.getMessage());
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

@@ -22,29 +22,39 @@ import phuchgt.dto.QuizDetailDTO;
  * @author mevrthisbang
  */
 public class GetQuizHistoryController extends HttpServlet {
+
+    private static final String ERROR = "error.jsp";
+    private static final String OKAY = "quizHistory.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String url = ERROR;
+        HttpSession session = request.getSession();
+        AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
         try {
-            HttpSession session=request.getSession();
-            AccountDTO loginUser=(AccountDTO) session.getAttribute("USER");
-            String name=request.getParameter("txtName");
-            if(name==null){
-                name="";
+            if (loginUser.getRole().equals("student")) {
+                String name = request.getParameter("txtName");
+                if (name == null) {
+                    name = "";
+                }
+                QuizDetailDAO dao = new QuizDetailDAO();
+                List<QuizDetailDTO> listQuizHistory = dao.getListQuizHistory(name, loginUser.getEmail());
+                for (QuizDetailDTO quizDetailDTO : listQuizHistory) {
+                    QuizDAO quizDAO = new QuizDAO();
+                    request.setAttribute(quizDetailDTO.getQuizID(), quizDAO.getQuizDetailByID(quizDetailDTO.getQuizID()));
+                }
+                request.setAttribute("listQuizHistory", listQuizHistory);
+                url = OKAY;
+            } else {
+                request.setAttribute("ERROR", "You do not have permission to do this");
             }
-            QuizDetailDAO dao=new QuizDetailDAO();
-            List<QuizDetailDTO> listQuizHistory=dao.getListQuizHistory(name, loginUser.getEmail());
-            for (QuizDetailDTO quizDetailDTO : listQuizHistory) {
-                QuizDAO quizDAO=new QuizDAO();
-                request.setAttribute(quizDetailDTO.getQuizID(), quizDAO.getQuizDetailByID(quizDetailDTO.getQuizID()));
-            }
-            request.setAttribute("listQuizHistory", listQuizHistory);
         } catch (Exception e) {
-            log("ERROR at GetQuizHistoryController: "+e.getMessage());
-        }finally{
-            request.getRequestDispatcher("quizHistory.jsp").forward(request, response);
+            log("ERROR at GetQuizHistoryController: " + e.getMessage());
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

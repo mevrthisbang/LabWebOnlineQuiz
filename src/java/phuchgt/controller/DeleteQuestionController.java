@@ -10,19 +10,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import phuchgt.dao.QuestionDAO;
+import phuchgt.dto.AccountDTO;
 
 /**
  *
  * @author mevrthisbang
  */
 public class DeleteQuestionController extends HttpServlet {
-    private static final String ERROR="error.jsp";
-    private static final String SUCCESS="LoadQuestionController";
+
+    private static final String ERROR = "error.jsp";
+    private static final String SUCCESS = "LoadQuestionController";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -54,18 +57,24 @@ public class DeleteQuestionController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url=ERROR;
+        String url = ERROR;
+        HttpSession session = request.getSession();
+        AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
         try {
-            String id=request.getParameter("id");
-            QuestionDAO dao=new QuestionDAO();
-            if(dao.delete(id)){
-                url=SUCCESS;
-            }else{
-                request.setAttribute("ERROR", "Delete failed");
+            if (loginUser.getRole().equals("admin")) {
+                String id = request.getParameter("id");
+                QuestionDAO dao = new QuestionDAO();
+                if (dao.delete(id)) {
+                    url = SUCCESS;
+                } else {
+                    request.setAttribute("ERROR", "Delete failed");
+                }
+            } else {
+                request.setAttribute("ERROR", "You do not have permission to do this");
             }
         } catch (Exception e) {
-            log("ERROR at DeleteQuestion: "+e.getMessage());
-        }finally{
+            log("ERROR at DeleteQuestion: " + e.getMessage());
+        } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
     }

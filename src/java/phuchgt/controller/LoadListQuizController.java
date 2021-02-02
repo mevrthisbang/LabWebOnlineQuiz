@@ -6,14 +6,14 @@
 package phuchgt.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import phuchgt.dao.QuizDAO;
-import phuchgt.dao.SubjectDAO;
+import phuchgt.dto.AccountDTO;
 import phuchgt.dto.QuizDTO;
 
 /**
@@ -22,27 +22,29 @@ import phuchgt.dto.QuizDTO;
  */
 public class LoadListQuizController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private static final String ERROR = "error.jsp";
+    private static final String OKAY = "listQuiz.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String url = ERROR;
+        HttpSession session = request.getSession();
+        AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
         try {
-            String subjectID = request.getParameter("subjectID");
-            QuizDAO dao=new QuizDAO();
-            List<QuizDTO> listQuiz=dao.getListQuizBySubjectId(subjectID);
-            request.setAttribute("listQuiz", listQuiz);
+            if (loginUser.getRole().equals("student")) {
+                String subjectID = request.getParameter("subjectID");
+                QuizDAO dao = new QuizDAO();
+                List<QuizDTO> listQuiz = dao.getListQuizBySubjectId(subjectID);
+                request.setAttribute("listQuiz", listQuiz);
+                url = OKAY;
+            } else {
+                request.setAttribute("ERROR", "You do not have permission to do this");
+            }
         } catch (Exception e) {
-            log("ERROR at LoadListQuizController: "+e.getMessage());
-        }finally{
-            request.getRequestDispatcher("listQuiz.jsp").forward(request, response);
+            log("ERROR at LoadListQuizController: " + e.getMessage());
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

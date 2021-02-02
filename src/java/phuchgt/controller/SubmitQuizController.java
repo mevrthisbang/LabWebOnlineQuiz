@@ -18,6 +18,7 @@ import phuchgt.dao.QuestionDAO;
 import phuchgt.dao.QuizDAO;
 import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dao.SubjectDAO;
+import phuchgt.dto.AccountDTO;
 import phuchgt.dto.QuestionDTO;
 import phuchgt.dto.QuizAnswerObj;
 import phuchgt.dto.QuizDetailDTO;
@@ -33,7 +34,6 @@ public class SubmitQuizController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
 
     }
 
@@ -69,52 +69,57 @@ public class SubmitQuizController extends HttpServlet {
         String url = ERROR;
         try {
             HttpSession session = request.getSession();
-            QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
-            QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
-            AnswerDAO answerDAO = new AnswerDAO();
-            int numberOfCorrect = 0;
-            if (studentAnswer == null) {
-                studentAnswer = new QuizAnswerObj(quizDetail.getStudentID());
-                QuestionDAO questionDAO = new QuestionDAO();
-                List<QuestionDTO> listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
-                for (QuestionDTO questionDTO : listQuestion) {
-                    studentAnswer.getStudentAnswer().put(questionDTO.getId(), answerDAO.getStuAnswerByQuestionID(questionDTO.getId()));
-                }
-            }
-            float scorePerQuestion = (float) (10 * 1.0) / studentAnswer.getStudentAnswer().size();
-            float score;
-            QuizDetailDAO dao = new QuizDetailDAO();
-            for (String question : studentAnswer.getStudentAnswer().keySet()) {
-                boolean isCorrectAnswer = false;
-                if (studentAnswer.getStudentAnswer().get(question).getId() != null) {
-                    if (answerDAO.isCorrectAnswer(studentAnswer.getStudentAnswer().get(question).getId())) {
-                        isCorrectAnswer = true;
-                        numberOfCorrect++;
+            AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
+            if (loginUser.getRole().equals("student")) {
+                QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
+                QuizDetailDTO quizDetail = (QuizDetailDTO) session.getAttribute("STUDENTQUIZDETAIL");
+                AnswerDAO answerDAO = new AnswerDAO();
+                int numberOfCorrect = 0;
+                if (studentAnswer == null) {
+                    studentAnswer = new QuizAnswerObj(quizDetail.getStudentID());
+                    QuestionDAO questionDAO = new QuestionDAO();
+                    List<QuestionDTO> listQuestion = questionDAO.getStuQuestionQuiz(quizDetail.getId());
+                    for (QuestionDTO questionDTO : listQuestion) {
+                        studentAnswer.getStudentAnswer().put(questionDTO.getId(), answerDAO.getStuAnswerByQuestionID(questionDTO.getId()));
                     }
                 }
-                studentAnswer.getStudentAnswer().get(question).setIsCorrectAnswer(isCorrectAnswer);
-                dao.updateStuAnswer(question, studentAnswer.getStudentAnswer().get(question));
-            }
-            score = scorePerQuestion * numberOfCorrect;
-            Date date = new Date();
-            quizDetail.setFinishedAt(date);
-            quizDetail.setNumberOfCorrect(numberOfCorrect);
-            quizDetail.setScore(score);
+                float scorePerQuestion = (float) (10 * 1.0) / studentAnswer.getStudentAnswer().size();
+                float score;
+                QuizDetailDAO dao = new QuizDetailDAO();
+                for (String question : studentAnswer.getStudentAnswer().keySet()) {
+                    boolean isCorrectAnswer = false;
+                    if (studentAnswer.getStudentAnswer().get(question).getId() != null) {
+                        if (answerDAO.isCorrectAnswer(studentAnswer.getStudentAnswer().get(question).getId())) {
+                            isCorrectAnswer = true;
+                            numberOfCorrect++;
+                        }
+                    }
+                    studentAnswer.getStudentAnswer().get(question).setIsCorrectAnswer(isCorrectAnswer);
+                    dao.updateStuAnswer(question, studentAnswer.getStudentAnswer().get(question));
+                }
+                score = scorePerQuestion * numberOfCorrect;
+                Date date = new Date();
+                quizDetail.setFinishedAt(date);
+                quizDetail.setNumberOfCorrect(numberOfCorrect);
+                quizDetail.setScore(score);
 
-            if (dao.updateQuizDetail(quizDetail)) {
-                request.setAttribute("score", score);
-                request.setAttribute("numberOfCorrect", numberOfCorrect);
-                request.setAttribute("numberOfQuestion", studentAnswer.getStudentAnswer().size());
-                SubjectDAO subjectDAO = new SubjectDAO();
-                QuizDAO quizDAO=new QuizDAO();
-                request.setAttribute("timeQuiz", subjectDAO.getSubjectQuizTimeByID(quizDAO.getQuizDetailByID(quizDetail.getQuizID()).getSubjectID()));
-                session.removeAttribute("STUDENTANSWER");
-                session.removeAttribute("STUDENTQUIZDETAIL");
-                session.removeAttribute("listQuestionQuiz");
-                session.removeAttribute("timeEndQuiz");
-                url = SUCCESS;
+                if (dao.updateQuizDetail(quizDetail)) {
+                    request.setAttribute("score", score);
+                    request.setAttribute("numberOfCorrect", numberOfCorrect);
+                    request.setAttribute("numberOfQuestion", studentAnswer.getStudentAnswer().size());
+                    SubjectDAO subjectDAO = new SubjectDAO();
+                    QuizDAO quizDAO = new QuizDAO();
+                    request.setAttribute("timeQuiz", subjectDAO.getSubjectQuizTimeByID(quizDAO.getQuizDetailByID(quizDetail.getQuizID()).getSubjectID()));
+                    session.removeAttribute("STUDENTANSWER");
+                    session.removeAttribute("STUDENTQUIZDETAIL");
+                    session.removeAttribute("listQuestionQuiz");
+                    session.removeAttribute("timeEndQuiz");
+                    url = SUCCESS;
+                } else {
+                    request.setAttribute("ERROR", "There's some errors during submit quiz");
+                }
             } else {
-                request.setAttribute("ERROR", "There's some errors during submit quiz");
+                request.setAttribute("ERROR", "You do not have permission to do this");
             }
         } catch (Exception e) {
             log("ERROR at SubmitController: " + e.getMessage());

@@ -65,51 +65,55 @@ public class DispatchQuestionController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = ERROR;
+        HttpSession session = request.getSession();
+        AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
         try {
-            HttpSession session = request.getSession();
-            HashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (HashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
-            if (listQuestionWithAnswers != null) {
-                int currentQuestion=0;
-                if (!request.getParameter("currentQuestion").isEmpty()) {
-                    currentQuestion = Integer.parseInt(request.getParameter("currentQuestion"));
-                }
-                String action = request.getParameter("action");
-                if (action != null) {
-                    if (action.equals("Next")) {
-                        ++currentQuestion;
-                        url = DISPATCH;
-                    } else if (action.equals("Previous")) {
-                        --currentQuestion;
-                        url = DISPATCH;
-                    } else if (action.equals("Finish Attempt")) {
-                        url = CONFIRM;
-                    } else if (action.equals("submit")) {
-                        url = SUBMIT;
-                    } else {
-                        request.setAttribute("ERROR", "Your action is invalid");
+            if (loginUser.getRole().equals("student")) {
+                HashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (HashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
+                if (listQuestionWithAnswers != null) {
+                    int currentQuestion = 0;
+                    if (!request.getParameter("currentQuestion").isEmpty()) {
+                        currentQuestion = Integer.parseInt(request.getParameter("currentQuestion"));
                     }
+                    String action = request.getParameter("action");
+                    if (action != null) {
+                        if (action.equals("Next")) {
+                            ++currentQuestion;
+                            url = DISPATCH;
+                        } else if (action.equals("Previous")) {
+                            --currentQuestion;
+                            url = DISPATCH;
+                        } else if (action.equals("Finish Attempt")) {
+                            url = CONFIRM;
+                        } else if (action.equals("submit")) {
+                            url = SUBMIT;
+                        } else {
+                            request.setAttribute("ERROR", "Your action is invalid");
+                        }
+                    }
+                    if (request.getParameter("dispatchRandom") != null && !request.getParameter("dispatchRandom").trim().isEmpty()) {
+                        currentQuestion = Integer.parseInt(request.getParameter("dispatchRandom"));
+                        url = DISPATCH;
+                    }
+                    QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
+                    if (studentAnswer == null) {
+                        studentAnswer = new QuizAnswerObj(loginUser.getEmail());
+                    }
+                    String questionID = request.getParameter("questionID");
+                    String answerID = request.getParameter("answerChoice");
+                    QuizDetailDAO dao = new QuizDetailDAO();
+                    if (studentAnswer.getStudentAnswer().containsKey(questionID)) {
+                        studentAnswer.updateAnswer(questionID, answerID);
+                        dao.updateStuAnswer(questionID, studentAnswer.getStudentAnswer().get(questionID));
+                    }
+                    session.setAttribute("STUDENTANSWER", studentAnswer);
+                    request.setAttribute("Question", listQuestionWithAnswers.keySet().toArray()[currentQuestion - 1]);
+                    request.setAttribute("currentQuestion", currentQuestion);
+                    request.setAttribute("listAnswer", listQuestionWithAnswers.values().toArray()[currentQuestion - 1]);
+                    request.setAttribute("numberOfQuestion", listQuestionWithAnswers.size());
                 }
-                if (request.getParameter("dispatchRandom") != null && !request.getParameter("dispatchRandom").trim().isEmpty()) {
-                    currentQuestion = Integer.parseInt(request.getParameter("dispatchRandom"));
-                    url = DISPATCH;
-                }
-                QuizAnswerObj studentAnswer = (QuizAnswerObj) session.getAttribute("STUDENTANSWER");
-                if (studentAnswer == null) {
-                    AccountDTO loginUser = (AccountDTO) session.getAttribute("USER");
-                    studentAnswer = new QuizAnswerObj(loginUser.getEmail());
-                }
-                String questionID = request.getParameter("questionID");
-                String answerID = request.getParameter("answerChoice");
-                QuizDetailDAO dao=new QuizDetailDAO();
-                if (studentAnswer.getStudentAnswer().containsKey(questionID)) {
-                    studentAnswer.updateAnswer(questionID, answerID);
-                    dao.updateStuAnswer(questionID, studentAnswer.getStudentAnswer().get(questionID));
-                }
-                session.setAttribute("STUDENTANSWER", studentAnswer);
-                request.setAttribute("Question", listQuestionWithAnswers.keySet().toArray()[currentQuestion - 1]);
-                request.setAttribute("currentQuestion", currentQuestion);
-                request.setAttribute("listAnswer", listQuestionWithAnswers.values().toArray()[currentQuestion - 1]);
-                request.setAttribute("numberOfQuestion", listQuestionWithAnswers.size());
+            } else {
+                request.setAttribute("ERROR", "You do not have permission to do this");
             }
         } catch (Exception e) {
             log("ERROR at DispatchQuestionController: " + e.getMessage());
