@@ -8,6 +8,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<c:if test="${sessionScope.USER!=null&& sessionScope.USER.role eq 'student'}" var="testRole">
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -116,3 +118,8 @@
 
     </body>
 </html>
+</c:if>
+<c:if test="${!testRole}">
+    <c:set var="ERROR" value="You do not have permission to access this" scope="request"/>
+    <%@include file="error.jsp"%>
+</c:if>

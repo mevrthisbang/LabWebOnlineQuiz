@@ -32,7 +32,7 @@ public class LoadSubjectController extends HttpServlet {
 
     private static final String STUDENT = "student.jsp";
     private static final String ADMIN = "LoadQuestionController";
-    private static final String ERROR = "error.jsp";
+    private static final String ERROR = "loginForm.jsp";
 
     @Override
     public void init() throws ServletException {
