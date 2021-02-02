@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import phuchgt.dao.AnswerDAO;
 import phuchgt.dao.QuestionDAO;
+import phuchgt.dao.QuizDAO;
 import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dao.SubjectDAO;
 import phuchgt.dto.QuestionDTO;
@@ -31,6 +32,38 @@ public class SubmitQuizController extends HttpServlet {
     private static final String SUCCESS = "quizResult.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setAttribute("ERROR", "You do not have permission to do this");
+        request.getRequestDispatcher(ERROR).forward(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = ERROR;
@@ -71,8 +104,10 @@ public class SubmitQuizController extends HttpServlet {
             if (dao.updateQuizDetail(quizDetail)) {
                 request.setAttribute("score", score);
                 request.setAttribute("numberOfCorrect", numberOfCorrect);
-//                SubjectDAO subjectDAO = new SubjectDAO();
-//                request.setAttribute("quizSubject", subjectDAO.getSubjectQuizByID(quizDetail.getSubjectID()));
+                request.setAttribute("numberOfQuestion", studentAnswer.getStudentAnswer().size());
+                SubjectDAO subjectDAO = new SubjectDAO();
+                QuizDAO quizDAO=new QuizDAO();
+                request.setAttribute("timeQuiz", subjectDAO.getSubjectQuizTimeByID(quizDAO.getQuizDetailByID(quizDetail.getQuizID()).getSubjectID()));
                 session.removeAttribute("STUDENTANSWER");
                 session.removeAttribute("STUDENTQUIZDETAIL");
                 session.removeAttribute("listQuestionQuiz");
@@ -86,36 +121,6 @@ public class SubmitQuizController extends HttpServlet {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
-
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     /**

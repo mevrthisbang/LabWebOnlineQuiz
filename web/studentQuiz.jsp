@@ -118,3 +118,8 @@
         }
     }, 1000);
 </script>
+<script type="text/javascript"> 
+        window.addEventListener('beforeunload', function (e) { 
+            e.preventDefault();  
+        }); 
+    </script> 

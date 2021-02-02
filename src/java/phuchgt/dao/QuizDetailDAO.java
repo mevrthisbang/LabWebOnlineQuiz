@@ -164,9 +164,11 @@ public class QuizDetailDAO implements Serializable {
             conn = MyConnection.getMyConnection();
             String sql = "Select quiz, score, numberOfCorrect\n"
                     + "From STUDENTQUIZDETAIL\n"
-                    + "Where student=? AND finishedAt<=GETDATE() AND subject IN(Select id\n"
+                    + "Where student=? AND finishedAt<=GETDATE() AND quiz IN(Select id\n"
+                    + "From QUIZ\n"
+                    + "Where subject IN(Select id\n"
                     + "From SUBJECT\n"
-                    + "Where name LIKE ?)";
+                    + "Where name LIKE ?))";
             preStmDetail = conn.prepareStatement(sql);
             preStmDetail.setString(1, loginUser);
             preStmDetail.setString(2, "%" + name + "%");
@@ -216,34 +218,30 @@ public class QuizDetailDAO implements Serializable {
         }
         return result;
     }
-//    public List<QuizDetailDTO> getQuizDetailByStudent(String studentID) throws Exception {
-//        List<QuizDetailDTO> result = null;
-//        QuizDetailDTO dto=null;
-//        try {
-//            conn = MyConnection.getMyConnection();
-//            String sql = "Select id, estimateFinishTime, status, subject, score, numberOfCorrect, startedAt, student\n"
-//                    + "From STUDENTQUIZDETAIL\n"
-//                    + "Where student=?";
-//            preStmDetail = conn.prepareStatement(sql);
-//            preStmDetail.setString(1, studentID);
-//            rs = preStmDetail.executeQuery();
-//            result=new ArrayList<>();
-//            while (rs.next()) {
-//                String id=rs.getString("id");
-//                Date estimateFinishTime = new Date(rs.getTimestamp("estimateFinishTime").getTime());
-//                String status = rs.getString("status");
-//                String subject = rs.getString("subject");
-//                String student=rs.getString("student");
-//                int score=rs.getInt("score");
-//                int numberOfCorrect=rs.getInt("numberOfCorrect");
-//                dto = new QuizDetailDTO(id, subject, student, score, numberOfCorrect);
-//                dto.setEstimateFinishTime(estimateFinishTime);
-//                dto.setStatus(status);
-//                result.add(dto);
-//            }
-//        } finally {
-//            closeConnection();
-//        }
-//        return result;
-//    }
+    public List<QuizDetailDTO> getIncompleteQuizDetailByStudent(String studentID) throws Exception {
+        List<QuizDetailDTO> result = null;
+        QuizDetailDTO dto=null;
+        try {
+            conn = MyConnection.getMyConnection();
+            String sql = "Select id, quiz, score, numberOfCorrect, student\n"
+                    + "From STUDENTQUIZDETAIL\n"
+                    + "Where student=? AND status='In Progress' AND estimateFinishTime<=GETDATE()";
+            preStmDetail = conn.prepareStatement(sql);
+            preStmDetail.setString(1, studentID);
+            rs = preStmDetail.executeQuery();
+            result=new ArrayList<>();
+            while (rs.next()) {
+                String id=rs.getString("id");
+                String quiz = rs.getString("quiz");
+                String student=rs.getString("student");
+                int score=rs.getInt("score");
+                int numberOfCorrect=rs.getInt("numberOfCorrect");
+                dto = new QuizDetailDTO(id, quiz, student, score, numberOfCorrect);
+                result.add(dto);
+            }
+        } finally {
+            closeConnection();
+        }
+        return result;
+    }
 }

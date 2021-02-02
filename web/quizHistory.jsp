@@ -62,7 +62,8 @@
                 <table id="listQuizHistory" class="display" style="width:100%">
                     <thead>
                         <tr>
-                            <th>SubjectID</th>
+                            <th>Subject</th>
+                            <th>Quiz Name</th>
                             <th>Number Of Correct</th>
                             <th>Score</th>
                         </tr>
@@ -70,7 +71,8 @@
                     <tbody>
                         <c:forEach items="${requestScope.listQuizHistory}" var="history">
                             <tr>
-                                <td>${history.subjectID}</td>
+                                <td>${requestScope[history.quizID].subjectID}</td>
+                                <td>${requestScope[history.quizID].name}</td>
                                 <td>${history.numberOfCorrect}</td>
                                 <td>${history.score}</td>
                             </tr>

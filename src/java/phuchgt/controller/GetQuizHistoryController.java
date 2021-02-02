@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import phuchgt.dao.QuizDAO;
 import phuchgt.dao.QuizDetailDAO;
 import phuchgt.dto.AccountDTO;
 import phuchgt.dto.QuizDetailDTO;
@@ -33,6 +34,10 @@ public class GetQuizHistoryController extends HttpServlet {
             }
             QuizDetailDAO dao=new QuizDetailDAO();
             List<QuizDetailDTO> listQuizHistory=dao.getListQuizHistory(name, loginUser.getEmail());
+            for (QuizDetailDTO quizDetailDTO : listQuizHistory) {
+                QuizDAO quizDAO=new QuizDAO();
+                request.setAttribute(quizDetailDTO.getQuizID(), quizDAO.getQuizDetailByID(quizDetailDTO.getQuizID()));
+            }
             request.setAttribute("listQuizHistory", listQuizHistory);
         } catch (Exception e) {
             log("ERROR at GetQuizHistoryController: "+e.getMessage());
