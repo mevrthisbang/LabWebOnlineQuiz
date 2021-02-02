@@ -122,7 +122,11 @@ public class CreateQuestionController extends HttpServlet {
                     listAnswer.add(setupAnswer(answer3, false));
                     listAnswer.add(setupAnswer(correctAnswer, true));
                     if (questionDAO.insert(question, listAnswer)) {
-                        url = SUCCESS;
+                        int recordsPerPage = 3;
+                        int noOfRecords = questionDAO.numberOfRecordSearchQuestion("", "", "");
+                        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+                        request.setAttribute("noOfPages", noOfPages);
+                        url = SUCCESS + "?page=" + noOfPages;
                     } else {
                         request.setAttribute("ERROR", "Insert failed");
                     }
@@ -130,7 +134,7 @@ public class CreateQuestionController extends HttpServlet {
                     url = INVALID;
                     request.setAttribute("INVALID", errorObj);
                 }
-            }else{
+            } else {
                 request.setAttribute("ERROR", "You do not have permission to do this");
             }
         } catch (Exception e) {

@@ -80,7 +80,7 @@ public class UpdateQuestionController extends HttpServlet {
                 String answer3 = request.getParameter("txtAnswer3");
                 String correctAnswer = request.getParameter("txtCorrectAnswer");
                 String subject = request.getParameter("cboSubjects");
-                String status = request.getParameter("cboStatus");
+                String status = request.getParameter("cboUStatus");
                 //valid
                 boolean valid = true;
                 QuestionErrorObj errorObj = new QuestionErrorObj();
@@ -104,17 +104,18 @@ public class UpdateQuestionController extends HttpServlet {
                     valid = false;
                     errorObj.setCorrectAnswerError("Not supposed to be empty");
                 }
+                String questionID = request.getParameter("txtQuestionID");
+                QuestionDTO question = new QuestionDTO(questionID, questionContent);
+                question.setSubject(subject);
+                question.setStatus(status);
+                List<AnswerDTO> listAnswer = new ArrayList<>();
+                listAnswer.add(setupAnswer(answer1, false, request.getParameter("txtAnswer1ID")));
+                listAnswer.add(setupAnswer(answer2, false, request.getParameter("txtAnswer2ID")));
+                listAnswer.add(setupAnswer(answer3, false, request.getParameter("txtAnswer3ID")));
+                listAnswer.add(setupAnswer(correctAnswer, true, request.getParameter("txtCorrectID")));
                 if (valid) {
                     QuestionDAO questionDAO = new QuestionDAO();
-                    String questionID = request.getParameter("txtQuestionID");
-                    QuestionDTO question = new QuestionDTO(questionID, questionContent);
-                    question.setSubject(subject);
-                    question.setStatus(status);
-                    List<AnswerDTO> listAnswer = new ArrayList<>();
-                    listAnswer.add(setupAnswer(answer1, false, request.getParameter("txtAnswer1ID")));
-                    listAnswer.add(setupAnswer(answer2, false, request.getParameter("txtAnswer2ID")));
-                    listAnswer.add(setupAnswer(answer3, false, request.getParameter("txtAnswer3ID")));
-                    listAnswer.add(setupAnswer(correctAnswer, true, request.getParameter("txtCorrectID")));
+
                     if (questionDAO.update(question, listAnswer)) {
                         url = SUCCESS;
                     } else {
@@ -123,6 +124,8 @@ public class UpdateQuestionController extends HttpServlet {
                 } else {
                     url = INVALID;
                     request.setAttribute("INVALID", errorObj);
+                    request.setAttribute("listAnswers", listAnswer);
+                    request.setAttribute("Question", question);
                 }
             } else {
                 request.setAttribute("ERROR", "You do not have permission to do this");

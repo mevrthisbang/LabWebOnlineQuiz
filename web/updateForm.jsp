@@ -59,7 +59,7 @@
                                     <label for="inputContent">Question Content</label>
                                     <textarea class="form-control" id="inputContent" name="txtQuestionContent" <c:if test="${requestScope.Question.status eq 'Deactive'}">readonly="true"</c:if>>${requestScope.Question.questionContent}</textarea>
                                         <font color="red">
-                                    ${requestScope.INVALID.nameError}
+                                    ${requestScope.INVALID.questionContentError}
                                     </font>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
                                             <label for="inputCorrectAnswer">Correct Answer</label>
                                             <textarea class="form-control" id="inputCorrectAnswer" name="txtCorrectAnswer" <c:if test="${requestScope.Question.status eq 'Deactive'}">readonly="true"</c:if>>${answer.answerContent}</textarea>
                                                 <font color="red">
-                                            ${requestScope.INVALID.nameError}
+                                            ${requestScope.INVALID.correctAnswerError}
                                             </font>
                                             <input type="hidden" name="txtCorrectID" value="${answer.id}"/>
                                         </div>
@@ -90,7 +90,8 @@
                                             <label for="inputAnswer${counter.count}">Answer ${counter.count}</label>
                                             <textarea class="form-control" id="inputAnswer${counter.count}" name="txtAnswer${counter.count}" <c:if test="${requestScope.Question.status eq 'Deactive'}">readonly="true"</c:if>>${answer.answerContent}</textarea>
                                                 <font color="red">
-                                            ${requestScope.INVALID.nameError}
+                                            <c:set var="answerCount" value="answer${counter.count}Error"/>
+                                            ${requestScope.INVALID[answerCount]}
                                             </font>
                                             <input type="hidden" name="txtAnswer${counter.count}ID" value="${answer.id}"/>
                                         </div>
@@ -104,7 +105,7 @@
                             <div class="center">
                                 <div class="form-group col-md-4">
                                     <label for="inputStatus">Status</label><br>
-                                    <select name="cboStatus" id="inputStatus" class="custom-select">
+                                    <select name="cboUStatus" id="inputStatus" class="custom-select">
                                         <option <c:if test="${requestScope.Question.status eq 'Active'}">selected="true"</c:if>>Active</option>
                                         <option <c:if test="${requestScope.Question.status eq 'Deactive'}">selected="true"</c:if>>Deactive</option>
                                         </select>

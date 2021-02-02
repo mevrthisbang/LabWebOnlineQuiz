@@ -72,7 +72,7 @@ public class DispatchQuestionController extends HttpServlet {
                 HashMap<QuestionDTO, List<AnswerDTO>> listQuestionWithAnswers = (HashMap<QuestionDTO, List<AnswerDTO>>) session.getAttribute("listQuestionQuiz");
                 if (listQuestionWithAnswers != null) {
                     int currentQuestion = 0;
-                    if (!request.getParameter("currentQuestion").isEmpty()) {
+                    if (request.getParameter("currentQuestion")!=null&&!request.getParameter("currentQuestion").isEmpty()) {
                         currentQuestion = Integer.parseInt(request.getParameter("currentQuestion"));
                     }
                     String action = request.getParameter("action");

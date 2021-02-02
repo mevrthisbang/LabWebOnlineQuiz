@@ -97,18 +97,18 @@ public class QuestionDAO implements Serializable {
         QuestionDTO question = null;
         try {
             conn = MyConnection.getMyConnection();
-            String sql = "Select questionContent, id, subject, status\n"
+            String sql = "Select questionContent, id, subject, status, createDate\n"
                     + "From QUESTION\n"
                     + "Where questionContent LIKE ?\n"
                     + "INTERSECT\n"
-                    + "Select questionContent, id, subject, status\n"
+                    + "Select questionContent, id, subject, status, createDate\n"
                     + "From QUESTION\n"
                     + "Where status LIKE ?\n"
                     + "INTERSECT \n"
-                    + "Select questionContent, id, subject, status\n"
+                    + "Select questionContent, id, subject, status, createDate\n"
                     + "From QUESTION\n"
                     + "Where subject LIKE ?\n"
-                    + "ORDER BY questionContent\n"
+                    + "ORDER BY createDate\n"
                     + "OFFSET ? ROWS\n"
                     + "FETCH NEXT ? ROWS ONLY";
             preStmQuestion = conn.prepareStatement(sql);

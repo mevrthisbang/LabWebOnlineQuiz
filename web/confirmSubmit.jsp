@@ -50,9 +50,10 @@
                     <h1>Confirm Submit</h1>
                 </div>
 
-                <form action="loadQuestionForQuiz" method="POST" style="margin-top: 20px;">
+                <form action="dispatchQuestion" method="POST" style="margin-top: 20px;margin-bottom: 20px;">
                     <div class="center">
                         <input class="btn btn-primary" type="submit" value="Back to Quiz?"/>
+                        <input type="hidden" name="dispatchRandom" value="1"/>
                     </div>
                 </form>
                 <div class="center">

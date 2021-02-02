@@ -4,6 +4,7 @@
     Author     : mevrthisbang
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -47,9 +48,17 @@
                     </font>
                 </p>
             </div>
-            <div class="center">
-                <a href="loadSubject" class="btn btn-primary">Back to homepage</a>
-            </div>
+            <c:if test="${sessionScope.USER!=null}" var="testNotNull">
+                <div class="center">
+                    <a href="loadSubject" class="btn btn-primary">Back to homepage</a>
+                </div>
+            </c:if>
+            <c:if test="${!testNotNull}">
+                <div class="center">
+                    <a href="loginForm.jsp" class="btn btn-primary">Back to homepage</a>
+                </div>
+            </c:if>
+
         </div>
     </body>
 </html>
